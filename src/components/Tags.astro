@@ -1,0 +1,60 @@
+---
+const { tags, noLink } = Astro.props;
+---
+
+{
+	tags && (
+	<div class="tags">
+		{
+			tags.map((tag: string) => (
+				noLink ? (
+					<div class="tag">
+						<span class="hash">
+							#
+						</span>
+						{tag}
+					</div>
+				) : (
+					<a class="tag" href={"/tags/" + tag}>
+						<span class="hash">
+							#
+						</span>
+						{tag}
+					</a>
+				)
+			))
+		}
+	</div>
+	)
+}
+<style>
+	.tags {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: .4em;
+		padding-block: .3em;
+		width: fit-content;
+	}
+	.tag {
+		font-size: 0.7em;
+		display: flex;
+		align-items: center;
+		padding: 2px 10px;
+		border-radius: 15px;
+		background-color: var(--layer);
+		width: fit-content;
+		gap: .4em;
+	}
+	a.tag {
+		transition: background-color 0.2s linear;
+		border: none;
+
+		&:hover {
+			background-color: var(--fade);
+		}
+	}
+	.hash {
+		color: var(--highlight);
+	}
+</style>

@@ -1,0 +1,29 @@
+---
+import BaseHead from '@components/BaseHead.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import Tags from '@components/Tags.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '@consts';
+
+import { getCollection } from 'astro:content';
+
+const tags = [...new Set((await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+).flatMap(p => p.data.tags))];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<Tags tags={tags} />
+		</main>
+		<Footer />
+	</body>
+</html>

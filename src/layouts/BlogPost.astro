@@ -1,0 +1,146 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseHead from '@components/BaseHead.astro';
+import Header from '@components/Header.astro';
+import Footer from '@components/Footer.astro';
+import FormattedDate from '@components/FormattedDate.astro';
+import ViewCounter from '@components/ViewCounter.astro';
+import ProgressBar from '@components/ProgressBar.astro';
+import ToTop from '@components/ToTop.astro';
+import ReadTime from '@components/ReadTime.astro';
+import SuggestedPosts from '@components/SuggestedPosts.astro';
+import Tags from '@components/Tags.astro';
+import { pathHasLocale } from 'astro:i18n';
+
+type Props = CollectionEntry<'blog'>['data'];
+
+const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={description} />
+		<style>
+			main {
+				width: 100%;
+				max-width: 100%;
+			}
+			.hero-image {
+				width: 100%;
+
+				.credit {
+					position: absolute;
+					bottom: 0;
+					left: 50%;
+					transform: translate(-50%, 0) scale(0);
+					padding: 0 0.4em;
+					font-size: 0.7em;
+					transition: transform 0.2s linear;
+				}
+				&:has(:hover) .credit {
+					transform: translate(-50%, 100%) scale(1);
+				}
+			}
+			.hero-image img {
+				display: block;
+				margin: 0 auto;
+				border-radius: 12px;
+				box-shadow: var(--box-shadow);
+				max-height: 100px;
+			}
+			.prose {
+				width: 65ch;
+				max-width: 100%;
+				margin: auto;
+				padding: 1em 2em;
+				color: var(--subtext);
+				border-image: linear-gradient(
+					#0000 0%,
+					#3333 10%,
+					#3333 90%,
+					#0000 100%
+				) 1;
+				border-right-width: 3px;
+				border-right-style: solid;
+				border-left-width: 3px;
+				border-left-style: solid;
+			}
+			.title {
+				margin-bottom: 1em;
+				padding: 1em 0;
+				text-align: center;
+				line-height: 1;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+			.title h1 {
+				color: var(--text);
+			}
+			.title hr {
+				margin-top: .5em;
+			}
+			.date {
+				margin-bottom: 0.5em;
+				color: rgb(var(--gray));
+			}
+			.last-updated-on {
+				font-style: italic;
+			}
+			.stats {
+				display: flex;
+				align-items: center;
+				gap: .4em;
+			}
+			@media screen and (max-width: 600px) {
+				main {
+					font-size: 0.8em
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<ProgressBar />
+		<ToTop />
+		<Header />
+		<main>
+			<article>
+				<div class="hero-image">
+					{
+						heroImage && (
+							<span class="credit">@{heroImage.slice(
+								heroImage.indexOf('_') + 1,
+								heroImage.indexOf('.')
+							)}</span>
+							<img src={heroImage} alt="" />
+						)
+					}
+				</div>
+				<div class="prose">
+					<div class="title">
+						<div class="date">
+							<FormattedDate date={pubDate} />
+							{
+								updatedDate && (
+									<div class="last-updated-on">
+										Last updated on <FormattedDate date={updatedDate} />
+									</div>
+								)
+							}
+						</div>
+						<h1>{title}</h1>
+						<div class="stats">
+							<ViewCounter />
+							<ReadTime />
+						</div>
+						<hr />
+					</div>
+					<Tags tags={tags} />
+					<slot />
+				</div>
+			</article>
+			<SuggestedPosts title={title} />
+		</main>
+		<Footer />
+	</body>
+</html>

@@ -1,0 +1,34 @@
+---
+import HeaderLink from '@components/HeaderLink.astro';
+import Socials from '@components/Socials.astro';
+---
+
+<header>
+	<nav>
+		<HeaderLink href="/">Blog</HeaderLink>
+		<div class="social-links-wrapper">
+			<Socials />
+		</div>
+	</nav>
+</header>
+<style>
+	header {
+		margin: 0;
+		padding: 0 1em;
+
+		nav {
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+			padding: 1em;
+			gap: 1em;
+		}
+	}
+	.social-links-wrapper {
+		margin-left: auto;
+
+		@media screen and (max-width: 460px) {
+			display: none;
+		}
+	}
+</style>

@@ -1,0 +1,53 @@
+---
+const { src } = Astro.props;
+---
+
+<div class="clickable-image" id={src}>
+	<img src="" alt="">
+	<button>Load</button>
+</div>
+<script type="module" define:vars={{src}} is:inline>
+	const container = document.getElementById(src);
+	const button = container.querySelector('button');
+	const image = container.querySelector('img');
+
+	button.addEventListener('click', () => {
+		image.src = src;
+		button.style.display = 'none';
+	});
+	image.addEventListener('load', () => {
+		image.style.opacity = '1';
+	});
+</script>
+<style>
+	.clickable-image {
+		width: 100px;
+		height: 100px;
+		border: 1px solid var(--layer);
+		border-radius: 8px;
+		display: inline-block;
+
+		img {
+			max-width: 100%;
+			max-height: 100%;
+			position: absolute;
+			opacity: 0;
+			transition: opacity 0.5s ease;
+		}
+		button {
+			cursor: pointer;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			background-color: var(--layer);
+			padding: 0.5em 1em;
+			border-radius: 15px;
+			color: var(--text);
+
+			&:hover {
+				background-color: var(--fade);
+			}
+		}
+	}
+</style>

@@ -1,0 +1,32 @@
+<div class="progress">
+	<div id="fill"></div>
+</div>
+<script type="module" is:inline>
+	const elem = document.getElementById('fill');
+	
+	function calculateProgress() {
+		const totalHeight = document.body.scrollHeight - window.innerHeight;
+		elem.style.width = (window.scrollY / totalHeight) * 100 + '%';
+	}
+
+	calculateProgress();
+	window.addEventListener("scroll", calculateProgress);
+	window.addEventListener("resize", calculateProgress);
+</script>
+<style>
+	#fill {
+		width: 0%;
+		max-width: 100%;
+		min-width: 0%;
+		height: 100%;
+		background-color: var(--highlight);
+	}
+	.progress {
+		width: 100%;
+		height: 2px;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 2;
+	}
+</style>

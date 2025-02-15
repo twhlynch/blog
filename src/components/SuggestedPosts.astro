@@ -1,0 +1,40 @@
+---
+const { title } = Astro.props;
+
+import { getCollection } from 'astro:content';
+import Post from '@components/Post.astro';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+).filter(p => p.data.title != title).slice(0, 3);
+---
+
+{
+	posts.length > 0 && (
+		<div class="recommended">
+			<h5>Read more</h5>
+			<div class="posts">
+				{
+					posts.map((post) => <Post post={post} />)
+				}
+			</div>
+		</div>
+	)
+}
+<style>
+	.recommended {
+		width: 65ch;
+		max-width: 100%;
+		margin: auto;
+		margin-top: 2em;
+		padding: 1em 2em;
+	}
+	h5 {
+		margin-bottom: 1em;
+	}
+	.posts {
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+	}
+</style>

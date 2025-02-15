@@ -1,0 +1,24 @@
+---
+import Socials from "@components/Socials.astro";
+const today = new Date();
+---
+
+<footer>
+	<span>
+		&copy; {today.getFullYear()}
+		<a href="https://twhlynch.me">twhlynch</a>
+	</span>
+	<Socials />
+</footer>
+<style>
+	footer {
+		color: var(--fade);
+		display: flex;
+		padding: 1em;
+		gap: 1em;
+		justify-content: center;
+		align-items: center;
+		flex-wrap: wrap;
+		margin-top: auto;
+	}
+</style>
