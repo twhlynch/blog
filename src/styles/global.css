@@ -108,6 +108,10 @@ img {
 	height: auto;
 	border-radius: 8px;
 }
+.prose img {
+	max-height: 200px;
+	max-width: 400px;
+}
 code {
 	padding: 2px 5px;
 	background-color: var(--layer);
