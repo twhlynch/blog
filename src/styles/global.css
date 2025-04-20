@@ -110,7 +110,7 @@ img {
 }
 .prose img {
 	max-height: 200px;
-	max-width: 400px;
+	max-width: min(400px, 80%);
 }
 code {
 	padding: 2px 5px;
