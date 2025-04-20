@@ -19,11 +19,11 @@ import Tags from '@components/Tags.astro';
 <style>
 	.post {
 		border-radius: 15px;
-		padding: 0.8em 1.4em;
+		padding: 0.4em 0.8em;
 		display: flex;
 		justify-content: space-between;
 		transition: color 0.2s linear, background-color 0.2s linear;
-		background-color: var(--hint);
+		/* background-color: var(--hint); */
 
 		img {
 			max-height: 5em;
@@ -42,8 +42,8 @@ import Tags from '@components/Tags.astro';
 		}
 
 		&:hover {
-			background-color: var(--layer);
-
+			background-color: var(--hint);
+			
 			h4 {
 				color: var(--highlight);
 			}
