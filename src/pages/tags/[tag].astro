@@ -1,15 +1,15 @@
 ---
-import BaseHead from '@components/BaseHead.astro';
-import Header from '@components/Header.astro';
-import Footer from '@components/Footer.astro';
-import Blogs from '@components/Blogs.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '@consts';
+import BaseHead from "@components/BaseHead.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import Blogs from "@components/Blogs.astro";
+import { SITE_TITLE, SITE_DESCRIPTION } from "@consts";
 
-import { getCollection } from 'astro:content';
+import { getCollection } from "astro:content";
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	const tags = posts.flatMap(p => p.data.tags);
+	const posts = await getCollection("blog");
+	const tags = posts.flatMap((p) => p.data.tags);
 	return tags.map((tag) => ({
 		params: { tag },
 	}));
@@ -28,7 +28,7 @@ const { tag } = Astro.params;
 		<main>
 			<a href="/tags">-&gt; all tags</a>
 			<section id="blogs">
-				<Blogs tag={tag}/>
+				<Blogs tag={tag} />
 			</section>
 		</main>
 		<Footer />

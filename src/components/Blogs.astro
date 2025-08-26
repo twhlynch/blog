@@ -1,18 +1,16 @@
 ---
 const { tag } = Astro.props;
 
-import { getCollection } from 'astro:content';
-import Post from '@components/Post.astro';
+import { getCollection } from "astro:content";
+import Post from "@components/Post.astro";
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-).filter(p => !tag || p.data.tags.includes(tag));
+const posts = (await getCollection("blog"))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.filter((p) => !tag || p.data.tags.includes(tag));
 ---
 
 <div class="posts">
-	{
-		posts.map((post) => <Post post={post} />)
-	}
+	{posts.map((post) => <Post post={post} />)}
 </div>
 <style>
 	.posts {

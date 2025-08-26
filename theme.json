@@ -137,14 +137,22 @@
 			}
 		},
 		{
-			"scope": ["variable", "variable.other", "punctuation.definition.variable"],
+			"scope": [
+				"variable",
+				"variable.other",
+				"punctuation.definition.variable"
+			],
 			"settings": {
 				"foreground": "#cdcdcd",
 				"fontStyle": "none"
 			}
 		},
 		{
-			"scope": ["entity.other.attribute-name", "entity.name.tag", "support.class"],
+			"scope": [
+				"entity.other.attribute-name",
+				"entity.name.tag",
+				"support.class"
+			],
 			"settings": {
 				"foreground": "#c3c3d5"
 			}

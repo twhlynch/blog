@@ -4,27 +4,21 @@ const { tags, noLink } = Astro.props;
 
 {
 	tags && (
-	<div class="tags">
-		{
-			tags.map((tag: string) => (
+		<div class="tags">
+			{tags.map((tag: string) =>
 				noLink ? (
 					<div class="tag">
-						<span class="hash">
-							#
-						</span>
+						<span class="hash">#</span>
 						{tag}
 					</div>
 				) : (
 					<a class="tag" href={"/tags/" + tag}>
-						<span class="hash">
-							#
-						</span>
+						<span class="hash">#</span>
 						{tag}
 					</a>
-				)
-			))
-		}
-	</div>
+				),
+			)}
+		</div>
 	)
 }
 <style>
@@ -32,8 +26,8 @@ const { tags, noLink } = Astro.props;
 		display: flex;
 		align-items: center;
 		flex-wrap: wrap;
-		gap: .4em;
-		padding-block: .3em;
+		gap: 0.4em;
+		padding-block: 0.3em;
 		width: fit-content;
 	}
 	.tag {
@@ -44,7 +38,7 @@ const { tags, noLink } = Astro.props;
 		border-radius: 15px;
 		background-color: var(--layer);
 		width: fit-content;
-		gap: .4em;
+		gap: 0.4em;
 	}
 	a.tag {
 		transition: background-color 0.2s linear;

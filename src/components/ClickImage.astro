@@ -3,20 +3,20 @@ const { src } = Astro.props;
 ---
 
 <div class="clickable-image" id={src}>
-	<img src="" alt="">
+	<img src="" alt="" />
 	<button>Load</button>
 </div>
-<script type="module" define:vars={{src}} is:inline>
+<script type="module" define:vars={{ src }} is:inline>
 	const container = document.getElementById(src);
-	const button = container.querySelector('button');
-	const image = container.querySelector('img');
+	const button = container.querySelector("button");
+	const image = container.querySelector("img");
 
-	button.addEventListener('click', () => {
+	button.addEventListener("click", () => {
 		image.src = src;
-		button.style.display = 'none';
+		button.style.display = "none";
 	});
-	image.addEventListener('load', () => {
-		image.style.opacity = '1';
+	image.addEventListener("load", () => {
+		image.style.opacity = "1";
 	});
 </script>
 <style>

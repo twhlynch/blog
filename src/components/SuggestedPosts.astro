@@ -1,12 +1,13 @@
 ---
 const { title } = Astro.props;
 
-import { getCollection } from 'astro:content';
-import Post from '@components/Post.astro';
+import { getCollection } from "astro:content";
+import Post from "@components/Post.astro";
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-).filter(p => p.data.title != title).slice(0, 3);
+const posts = (await getCollection("blog"))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.filter((p) => p.data.title != title)
+	.slice(0, 3);
 ---
 
 {
@@ -14,9 +15,9 @@ const posts = (await getCollection('blog')).sort(
 		<div class="recommended">
 			<h5>Read more</h5>
 			<div class="posts">
-				{
-					posts.map((post) => <Post post={post} />)
-				}
+				{posts.map((post) => (
+					<Post post={post} />
+				))}
 			</div>
 		</div>
 	)

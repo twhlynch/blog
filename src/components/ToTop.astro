@@ -8,18 +8,20 @@
 		><path
 			stroke-linecap="round"
 			stroke-linejoin="round"
-			d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"
-		/>
+			d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"></path>
 	</svg>
 </div>
 <script type="module" is:inline>
-	const elem = document.getElementById('to-top');
-	elem.addEventListener('click', () => {
+	const elem = document.getElementById("to-top");
+	elem.addEventListener("click", () => {
 		window.scrollTo(0, 0);
 	});
 
 	function calculateProgress() {
-		elem.style.transform = window.scrollY > window.innerHeight ? 'translateY(0)' : 'translateY(3em)';
+		elem.style.transform =
+			window.scrollY > window.innerHeight
+				? "translateY(0)"
+				: "translateY(3em)";
 	}
 
 	calculateProgress();
@@ -42,7 +44,9 @@
 		justify-content: center;
 		cursor: pointer;
 		transform: translateY(3em);
-		transition: background-color 0.2s linear, transform 0.2s ease;
+		transition:
+			background-color 0.2s linear,
+			transform 0.2s ease;
 		-webkit-transition: -webkit-transform 0.2s ease;
 		-moz-transition: -moz-transform 0.2s ease;
 		-o-transition: -o-transform 0.2s ease;

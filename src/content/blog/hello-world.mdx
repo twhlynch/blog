@@ -1,9 +1,9 @@
 ---
-title: 'Hello World!'
-description: 'A new blog'
-pubDate: 'Feb 15 2025'
-heroImage: '/hero/hello-world_GentVR.webp'
-tags: ['meta', 'javascript', 'astro']
+title: "Hello World!"
+description: "A new blog"
+pubDate: "Feb 15 2025"
+heroImage: "/hero/hello-world_GentVR.webp"
+tags: ["meta", "javascript", "astro"]
 ---
 
 Hello World! So creative right?
@@ -11,11 +11,13 @@ Hello World! So creative right?
 I've been meaning to create a blog website for a long while now, and I've finally got around to doing it. Now I just have to actually use it...
 
 ## Reasoning
+
 Over the past year I've taken interest in watching tech streamers like [Theo](https://youtube.com/@t3dotgg), and [Primeagen](https://youtube.com/@theprimeagen). Many of their videos are reacting to interesting tech blog posts, and after watching a few of these I decided to check out the blogs myself. I now find myself often reading through personal blogs, and I have downloaded an RSS reader to have them all in one place. Exploring hackernews, and traversing webrings, seeing so many people of similar interests to my own creating their own blogs.
 
 Some blogs I found a particular interest in are [Ludicity](https://ludic.mataroa.blog/), [Sidhion](https://sidhion.com/blog/), and [eieio](https://eieio.games). Ludicity in particular was probably the most interesting, and by far the most popular. A few blogs from [xyzeva](https://kibty.town) also piqued my interest, exploring cyber security and interesting exploits.
 
 ## Content
+
 I hope to make a post every month or so, on things I make, issues I solve, or just things I find interesting. Ideally i'll end up with quite a few small posts documenting or complaining about highly specialized problems.
 
 As demonstrated in this post I'll be using fanart of [idnex](/who-is-idnex) for all the thumbnails. If you don't know what im talking about, I should have a post up about it soon.
@@ -25,6 +27,7 @@ I'll probably also use this as a place to put guides for modding games, mostly a
 I'll be making some posts of relatively dated content too. Given I've been putting this idea off for so long, I have quite a few ideas written down.
 
 ## Hosting
+
 I thought about buying a new domain for this site, and still may do so in the future, but until I have a substantial amount of posts up, I'm sticking with my `blog.` subdomain.
 
 I spent a while deciding on how I would build this site. Whether I would use a site like [mataroa](https://mataroa.blog), [hugo](https://gohugo.io/), or a mediawiki, or if I should just build my own solution. Initially I wanted to write a shell script to build a static page blog, as it would be funny were people to ask me what framework I used, and it's just a massive bash script. I abandoned that idea for something that would be quicker to make, but still "mine".
@@ -32,6 +35,7 @@ I spent a while deciding on how I would build this site. Whether I would use a s
 After seeing it's sentiment on [state of JS](https://2024.stateofjs.com/en-US/libraries/) this year, I decided to go with `Astro`. Most of it's negative views were about client side JS being too "hacky" but that only made me more interested in giving it a try, and after using it, I'm pretty glad I did.
 
 ## Components
+
 I built various components to make this blog more functional.
 
 - views tracker
@@ -41,6 +45,7 @@ I built various components to make this blog more functional.
 - post tags
 
 ### Views tracker
+
 The views tracker keeps count of how many people have visited each page.
 Ive defined a 'view' as a user opening a page with an hour interval before counting another view.
 
@@ -51,6 +56,7 @@ The worker increments a basic KV storage value using the requester origin as the
 For some basic security I limited the views to only track urls on my domains, and I hopefully wont get spammed by my discord server.
 
 ### Read time
+
 The read time component estimates the time it would take an average reader to finish reading a blog post.
 
 It works by reading the `textContent` of the page and using the number of words at 238 WPM to get the minutes and/or hours a full read would take.
@@ -58,13 +64,17 @@ It works by reading the `textContent` of the page and using the number of words 
 238 is not an arbitrary number, it is based off [this article](https://www.sciencedirect.com/science/article/abs/pii/S0749596X19300786), (which is the first result on google) which states that the average WPM is 238 for non-fiction texts.
 
 ### Progress bar
+
 The progress bar was very simple, it just takes the current position on the page, and the height of the page to get a percentage that it should cover left to right.
 
 ### Jump to top
+
 This one works just as the one above, but instead of setting the width of a bar, reveals a button in the bottom right once you are more than the viewport height down the page.
 
 ### Post tags
+
 Each post has tags associated to it, that appear atop the post content. Blogs can be filtered by tags, and you can see a view all tags page on the homepage. Eventually, I might also use relevant tags to curate the read more section at the bottom of the page.
 
 ## Outro
+
 Thats all for now, thanks for reading :>

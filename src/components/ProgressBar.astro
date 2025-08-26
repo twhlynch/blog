@@ -2,11 +2,11 @@
 	<div id="fill"></div>
 </div>
 <script type="module" is:inline>
-	const elem = document.getElementById('fill');
-	
+	const elem = document.getElementById("fill");
+
 	function calculateProgress() {
 		const totalHeight = document.body.scrollHeight - window.innerHeight;
-		elem.style.width = (window.scrollY / totalHeight) * 100 + '%';
+		elem.style.width = (window.scrollY / totalHeight) * 100 + "%";
 	}
 
 	calculateProgress();

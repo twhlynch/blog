@@ -1,6 +1,6 @@
 ---
-import { ClientRouter } from 'astro:transitions';
-import '@styles/global.css';
+import { ClientRouter } from "astro:transitions";
+import "@styles/global.css";
 
 interface Props {
 	title: string;
@@ -10,7 +10,7 @@ interface Props {
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const { title, description, image = '/thumb.png' } = Astro.props;
+const { title, description, image = "/thumb.png" } = Astro.props;
 ---
 
 <!-- Global Metadata -->
@@ -20,10 +20,16 @@ const { title, description, image = '/thumb.png' } = Astro.props;
 <meta name="generator" content={Astro.generator} />
 
 <!-- Font preloads -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+	rel="preload"
+	href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+/>
+<link
+	rel="stylesheet"
+	href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+/>
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
@@ -48,12 +54,17 @@ const { title, description, image = '/thumb.png' } = Astro.props;
 <meta property="twitter:image" content={new URL(image, Astro.url)} />
 
 <!-- Google Analytics -->
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-BDS57RBQ3Q" is:inline></script>
+<script
+	async=""
+	src="https://www.googletagmanager.com/gtag/js?id=G-BDS57RBQ3Q"
+	is:inline></script>
 <script is:inline>
 	window.dataLayer = window.dataLayer || [];
-	function gtag(){dataLayer.push(arguments);}
-	gtag('js', new Date());
-	gtag('config', 'G-BDS57RBQ3Q');
+	function gtag() {
+		dataLayer.push(arguments);
+	}
+	gtag("js", new Date());
+	gtag("config", "G-BDS57RBQ3Q");
 </script>
 
 <ClientRouter />
