@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import Theme from './theme.json';
 
 // https://astro.build/config
 export default defineConfig({
@@ -9,7 +10,11 @@ export default defineConfig({
 	integrations: [mdx(), sitemap()],
 	markdown: {
 		shikiConfig: {
-			theme: 'github-dark-high-contrast'
+			themes: {
+				light: Theme,
+				dark: Theme,
+			},
+			theme: Theme,
 		},
 	}
 });
