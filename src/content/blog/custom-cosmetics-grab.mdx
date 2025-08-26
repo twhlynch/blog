@@ -1,0 +1,44 @@
+---
+title: 'Custom Cosmetics in GRAB'
+description: 'A basic introduction to modding cosmetics.'
+pubDate: 'Jan 25 2024'
+updateDate: 'Aug 26 2025'
+heroImage: '/hero/the-other-one_TheWhiteCrescent.png'
+tags: ['guide', 'grab', 'modding', 'steam']
+---
+
+###### [Canonical > Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=3146826695)
+
+## Creating compatible models
+First of course you want to get yourself a model to use as your cosmetic. Open this in blender and we will come back to it.
+For this example i will be using this 'Grabby bot' model as a custom checkpoint.
+
+![Grabby Checkpoint Model](/content/grabby-model.png)
+
+Go to https://github.com/uberpixel/SGM-file-format and download the repository with the green "Code" button as a ZIP.
+Unzip it and locate SGM-file-format-master\BlenderExport\2_8x\io_export_sgm.py
+In blender go to Edit>Preferences>Add-ons and click Install.
+
+![Blender Add-ons](/content/blender-plugins.png)
+
+Enter the path to io_export_sgm.py and click Install Add-on.
+Now go back to your model. Ensure it is joined and is the active object.
+Click File>Export>Rayne Model (.sgm), name it, and then "Export Rayne Model".
+
+![Import SGM Menu](/content/import-sgm.png)
+
+Now you have your GRAB compatible model.
+
+## Using custom models
+
+Now that you have a .sgm file you are ready to use it in game.
+Go to your Steam library and locate GRAB.
+Click the cog (or right click on the game in the category list), Manage, Browse local files.
+It should open an explorer window.
+Navigate to GRAB\Resources\cosmetics or GRAB\Resources\models for default models.
+From there find the file you are looking to replace.
+For this example I find "GRAB\Resources\models\player\checkpoint.sgm".
+Rename your custom model to match, so for me "checkpoint.sgm", and replace the file.
+Now boot up the game and you should see your custom model!
+
+![Grabby checkpoint in use](/content/grabby-checkpoint-used.jpg)
