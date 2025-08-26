@@ -108,10 +108,17 @@ const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.prop
 				<div class="hero-image">
 					{
 						heroImage && (
-							<span class="credit">@{heroImage.slice(
-								heroImage.indexOf('_') + 1,
-								heroImage.indexOf('.')
-							)}</span>
+							<span class="credit">{
+								heroImage.includes('_')
+									? "@" + heroImage.slice(
+										heroImage.indexOf('_') + 1,
+										heroImage.indexOf('.')
+									) : heroImage.slice(
+										heroImage.lastIndexOf('/') + 1,
+										heroImage.indexOf('.')
+									)
+								}
+							</span>
 							<img src={heroImage} alt="" />
 						)
 					}
