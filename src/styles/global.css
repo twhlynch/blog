@@ -129,7 +129,8 @@ blockquote {
 	border-left: 4px solid var(--layer);
 	padding: 0 0 0 20px;
 	margin: 0px;
-	font-size: 1.333em;
+	font-size: 0.9em;
+	color: var(--fade);
 }
 hr {
 	border: none;
