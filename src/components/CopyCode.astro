@@ -47,17 +47,21 @@ const id = Math.random().toString(36).slice(2, 11);
 
 		const copyButton = wrapper.children[0];
 
+		let timeout = undefined;
+
 		copyButton.addEventListener("click", async () => {
 			await navigator.clipboard.writeText(code.textContent);
 
 			const [svgCopy, svgCopied] = copyButton.children;
 
-			svgCopy.classList.toggle("disabled");
-			svgCopied.classList.toggle("disabled");
+			svgCopy.classList.add("disabled");
+			svgCopied.classList.remove("disabled");
 
-			setTimeout(() => {
-				svgCopy.classList.toggle("disabled");
-				svgCopied.classList.toggle("disabled");
+			clearTimeout(timeout);
+
+			timeout = setTimeout(() => {
+				svgCopy.classList.remove("disabled");
+				svgCopied.classList.add("disabled");
 			}, 1000);
 		});
 	}
