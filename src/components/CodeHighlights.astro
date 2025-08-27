@@ -1,0 +1,75 @@
+---
+const id = Math.random().toString(36).slice(2, 11);
+---
+
+<script type="module" define:vars={{ id }} is:inline>
+	const inlineCodes = Array.from(
+		document.querySelectorAll("code:not(pre > code)"),
+	);
+	const codeBlocks = Array.from(document.querySelectorAll("pre:has(code)"));
+
+	for (const code of inlineCodes) {
+		const codeContent = code.textContent;
+		if (!codeContent) continue;
+
+		const matchedNodes = [];
+
+		codeBlocks.forEach((block) => {
+			const walker = document.createTreeWalker(
+				block,
+				NodeFilter.SHOW_TEXT,
+				null,
+				false,
+			);
+
+			const textNodes = [];
+			let node;
+			while ((node = walker.nextNode())) {
+				textNodes.push(node);
+			}
+
+			const fullText = textNodes.map((n) => n.textContent).join("");
+
+			let startIdx = 0;
+			while (
+				(startIdx = fullText.indexOf(codeContent, startIdx)) !== -1
+			) {
+				const endIdx = startIdx + codeContent.length;
+
+				let running = 0;
+				const matchingNodes = [];
+
+				for (const n of textNodes) {
+					const nodeStart = running;
+					const nodeEnd = running + n.textContent.length;
+
+					if (nodeEnd > startIdx && nodeStart < endIdx) {
+						matchingNodes.push(n.parentElement);
+					}
+
+					running = nodeEnd;
+				}
+
+				if (matchingNodes.length > 0) {
+					matchingNodes.forEach((n) => matchedNodes.push(n));
+				}
+
+				startIdx = endIdx;
+			}
+		});
+
+		if (matchedNodes.length) {
+			code.addEventListener("mouseover", () => {
+				matchedNodes.forEach((elem) => {
+					elem.classList.add("highlight");
+				});
+			});
+
+			code.addEventListener("mouseout", () => {
+				matchedNodes.forEach((elem) => {
+					elem.classList.remove("highlight");
+				});
+			});
+		}
+	}
+</script>

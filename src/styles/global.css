@@ -129,6 +129,17 @@ code {
 	padding: 2px 5px;
 	background-color: var(--layer);
 	border-radius: 2px;
+
+	.line:has(.highlight)::before {
+		position: absolute;
+		left: -1rem;
+		content: " ";
+		border-left: 5px solid var(--highlight);
+	}
+	.highlight:not(:has(*)) {
+		color: var(--highlight) !important;
+		text-shadow: 0 0 1rem var(--highlight);
+	}
 }
 pre {
 	padding: 0.6em 1em;

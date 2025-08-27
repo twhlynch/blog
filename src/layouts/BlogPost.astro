@@ -11,6 +11,7 @@ import ReadTime from "@components/ReadTime.astro";
 import SuggestedPosts from "@components/SuggestedPosts.astro";
 import Tags from "@components/Tags.astro";
 import CopyCode from "@components/CopyCode.astro";
+import CodeHighlights from "@components/CodeHighlights.astro";
 
 type Props = CollectionEntry<"blog">["data"];
 
@@ -152,6 +153,7 @@ const { title, description, pubDate, updatedDate, heroImage, tags } =
 					<Tags tags={tags} />
 					<slot />
 					<CopyCode />
+					<CodeHighlights />
 				</div>
 			</article>
 			<SuggestedPosts title={title} />
