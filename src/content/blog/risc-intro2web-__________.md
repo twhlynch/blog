@@ -50,7 +50,7 @@ http.HandleFunc("/getReport", func(w http.ResponseWriter, r *http.Request) {
 })
 ```
 
-Specifically, `if err = shouldAllowReport(id)` doesnt use `:=` to declare and assign `err` like all the other calls, instead it uses `=` which assigns the error to the previously declared `err` at `err := os.Mkdir(sockdir, 0o777)`.
+Specifically, `if err = shouldAllowReport(id)` doesnt use `:=` to declare and assign `err` like all the other calls, instead it uses ` =` which assigns the error to the previously declared `err` at `err := os.Mkdir(sockdir, 0o777)`.
 
 This means that all threads of the `/getReport` http handler will use the same `err` variable, exposing a potential race condition where a request for `6.pdf` sets `err`, then a request to an allowed pdf sets it to `nil` making the `err != nil` check after `shouldAllowReport` pass for the `6.pdf` request.
 
