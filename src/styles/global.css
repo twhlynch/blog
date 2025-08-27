@@ -139,6 +139,9 @@ pre {
 pre > code {
 	all: unset;
 }
+pre:has(> code) {
+	margin-bottom: 0.5rem;
+}
 blockquote {
 	border-left: 4px solid var(--layer);
 	padding: 0 0 0 20px;
