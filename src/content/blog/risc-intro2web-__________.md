@@ -2,7 +2,7 @@
 title: "██████████"
 description: "RISC intro2web challenge 7"
 pubDate: "Aug 27 2025"
-heroImage: "/hero/RISC.webp"
+heroImage: "/hero/index-bank-robber_Raaquilla.webp"
 tags: ["cyber", "go", "python", "ctf", "exploit"]
 ---
 

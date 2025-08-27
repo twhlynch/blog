@@ -2,7 +2,7 @@
 title: "Your feedback is not appreciated"
 description: "RISC intro2web challenge 4"
 pubDate: "Aug 26 2025"
-heroImage: "/hero/RISC.webp"
+heroImage: "/hero/risc-index_Raaquilla.webp"
 tags: ["cyber", "XSS", "ctf", "exploit"]
 ---
 

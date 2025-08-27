@@ -2,7 +2,7 @@
 title: "Auditing the Board"
 description: "RISC intro2web challenge 1"
 pubDate: "Aug 26 2025"
-heroImage: "/hero/RISC.webp"
+heroImage: "/hero/risc-index-2_Raaquilla.webp"
 tags: ["cyber", "html", "ctf", "exploit"]
 ---
 

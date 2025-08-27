@@ -2,7 +2,7 @@
 title: "I am the admin now"
 description: "RISC intro2web challenge 6"
 pubDate: "Aug 27 2025"
-heroImage: "/hero/RISC.webp"
+heroImage: "/hero/risc-index-2_Raaquilla.webp"
 tags: ["cyber", "python", "sql", "php", "ctf", "exploit"]
 ---
 
