@@ -16,3 +16,6 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# non webp hero images
+public/hero/*.png

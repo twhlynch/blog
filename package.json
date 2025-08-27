@@ -6,7 +6,8 @@
 		"dev": "astro dev",
 		"build": "astro build",
 		"preview": "astro preview",
-		"astro": "astro"
+		"astro": "astro",
+		"webp": "for i in public/hero/*.png; do name=`echo \"$i\" | cut -d'.' -f1`; echo \"$name\"; ffmpeg -loglevel quiet -i \"$i\" \"${name}.webp\"; done"
 	},
 	"dependencies": {
 		"@astrojs/mdx": "^4.0.3",
