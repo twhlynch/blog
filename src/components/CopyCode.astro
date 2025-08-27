@@ -80,6 +80,8 @@ const id = Math.random().toString(36).slice(2, 11);
 		right: 5px;
 		cursor: pointer;
 		color: var(--text);
+		opacity: 0;
+		transition: all 0.2s;
 
 		@media screen and (max-width: 600px) {
 			width: 1.7rem;
@@ -91,5 +93,9 @@ const id = Math.random().toString(36).slice(2, 11);
 		svg.disabled {
 			display: none;
 		}
+	}
+	.copy-code-wrapper:has(+ :hover) > .copy-code,
+	.copy-code-wrapper:hover .copy-code {
+		opacity: 1;
 	}
 </style>
