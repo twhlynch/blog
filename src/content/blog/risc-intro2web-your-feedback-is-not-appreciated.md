@@ -4,9 +4,8 @@ description: "RISC intro2web challenge 4"
 pubDate: "Aug 26 2025"
 heroImage: "/hero/risc-index_Raaquilla.webp"
 tags: ["cyber", "XSS", "ctf", "exploit"]
+canonical: "https://writeups.urisc.club/web/4_your-feedback_is_not_appreciated/"
 ---
-
-###### [Canonical > RISC](https://writeups.urisc.club/web/4_your-feedback_is_not_appreciated/)
 
 ## Challenge description
 

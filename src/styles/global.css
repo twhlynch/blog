@@ -91,6 +91,22 @@ a {
 	color: inherit;
 	text-decoration: none;
 }
+.canonical {
+	font-size: 1rem;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	flex-direction: row;
+	width: fit-content;
+	gap: 0.5rem;
+	margin-block: 0.5rem;
+	border-bottom: none !important;
+
+	svg {
+		width: 1.3rem;
+		height: 1.3rem;
+	}
+}
 .prose a {
 	border-bottom: 2px solid var(--layer);
 	color: var(--highlight);

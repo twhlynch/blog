@@ -4,9 +4,8 @@ description: "RISC intro2web challenge 6"
 pubDate: "Aug 27 2025"
 heroImage: "/hero/risc-index-2_Raaquilla.webp"
 tags: ["cyber", "python", "sql", "php", "ctf", "exploit"]
+canonical: "https://writeups.urisc.club/web/6_i_am_the_admin_now/"
 ---
-
-###### [Canonical > RISC](https://writeups.urisc.club/web/6_i_am_the_admin_now/)
 
 ## Challenge description
 

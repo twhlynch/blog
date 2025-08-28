@@ -4,9 +4,8 @@ description: "RISC intro2web challenge 5"
 pubDate: "Aug 27 2025"
 heroImage: "/hero/index-money_Tom_678.webp"
 tags: ["cyber", "php", "javascript", "ctf", "exploit"]
+canonical: "https://writeups.urisc.club/web/5_billionaire/"
 ---
-
-###### [Canonical > RISC](https://writeups.urisc.club/web/5_billionaire/)
 
 ## Challenge description
 
