@@ -27,6 +27,9 @@ const id = Math.random().toString(36).slice(2, 11);
 
 	let views = prevViews;
 
+	const counter = document.getElementById("view-count-" + id);
+	counter.textContent = views;
+
 	if (now - prevTime > 60 * 60 * 1000) {
 		localStorage.setItem(`views-${location.pathname}`, `${views}:${now}`);
 		try {
@@ -50,7 +53,7 @@ const id = Math.random().toString(36).slice(2, 11);
 		}
 	}
 
-	document.getElementById("view-count-" + id).textContent = views;
+	counter.textContent = views;
 </script>
 <style>
 	div {
