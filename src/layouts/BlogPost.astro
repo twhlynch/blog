@@ -171,7 +171,7 @@ const { title, description, pubDate, updatedDate, heroImage, tags, canonical } =
 					<CodeHighlights />
 				</div>
 			</article>
-			<SuggestedPosts title={title} />
+			<SuggestedPosts props={Astro.props} />
 		</main>
 		<Footer />
 	</body>
