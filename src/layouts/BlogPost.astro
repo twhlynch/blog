@@ -12,6 +12,7 @@ import SuggestedPosts from "@components/SuggestedPosts.astro";
 import Tags from "@components/Tags.astro";
 import CopyCode from "@components/CopyCode.astro";
 import CodeHighlights from "@components/CodeHighlights.astro";
+import Spoiler from "@components/Spoiler.astro";
 
 type Props = CollectionEntry<"blog">["data"];
 
@@ -131,7 +132,7 @@ const { title, description, pubDate, updatedDate, heroImage, tags, canonical } =
 						)
 					}
 				</div>
-				<div class="prose">
+				<div class="prose" id="prose">
 					<div class="title">
 						<div class="date">
 							<FormattedDate date={pubDate} />
@@ -164,6 +165,11 @@ const { title, description, pubDate, updatedDate, heroImage, tags, canonical } =
 								</svg>
 								Canonical: {new URL(canonical).hostname}
 							</a>
+						)
+					}
+					{
+						tags.includes("ctf") && !tags.includes("meta") && (
+							<Spoiler />
 						)
 					}
 					<slot />

@@ -157,6 +157,9 @@ code {
 		text-shadow: 0 0 1rem var(--highlight);
 	}
 }
+.code-spoiler {
+	filter: blur(0.5rem);
+}
 pre {
 	padding: 0.6em 1em;
 	border-radius: 8px;
