@@ -29,18 +29,24 @@ const id = Math.random().toString(36).slice(2, 11);
 	let node;
 	while ((node = walker.nextNode())) {
 		const text = node.textContent;
-		const index = text.indexOf("index");
+		const index = text.search(/index|idnex/i);
 		if (index !== -1) {
 			const span = document.createElement("span");
 			node.before(span); // idk why but i need to use this span
 
+			const match = text.substring(index, index + 5);
+			console.log(match);
+
 			const before = document.createTextNode(text.substring(0, index));
-			node.textContent = text.substring(index + "index".length);
+			node.textContent = text.substring(index + 5);
 
 			span.before(before);
 
 			const instance = template.content.cloneNode(true);
 			span.appendChild(instance);
+			const newRefInstance = span.children[0]; // cos its moved i guess
+			newRefInstance.children[0].innerText = match.substring(0, 3);
+			newRefInstance.children[2].innerText = match.substring(3);
 		}
 	}
 </script>
