@@ -6,10 +6,12 @@ import Post from "@components/Post.astro";
 
 const posts = (await getCollection("blog"))
 	.sort((a, b) => {
-		const aIsMeta = a.data.tags.includes("meta");
-		const bIsMeta = b.data.tags.includes("meta");
-		if (aIsMeta && !bIsMeta) return -1;
-		if (bIsMeta && !aIsMeta) return 1;
+		if (tag) {
+			const aIsMeta = a.data.tags.includes("meta");
+			const bIsMeta = b.data.tags.includes("meta");
+			if (aIsMeta && !bIsMeta) return -1;
+			if (bIsMeta && !aIsMeta) return 1;
+		}
 		return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
 	})
 	.filter((p) => !tag || p.data.tags.includes(tag));
