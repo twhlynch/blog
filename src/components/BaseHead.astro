@@ -67,4 +67,11 @@ const { title, description, image = "/thumb.png" } = Astro.props;
 	gtag("config", "G-BDS57RBQ3Q");
 </script>
 
+<!-- Admin check (makes views not count) -->
+<script>
+	let params = new URLSearchParams(location.search);
+	let isAdmin = params.get("isAdmin") !== null;
+	if (isAdmin) localStorage.setItem("isAdmin", "true");
+</script>
+
 <ClientRouter />

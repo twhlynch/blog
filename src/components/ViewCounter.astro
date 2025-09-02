@@ -33,11 +33,13 @@ const id = Math.random().toString(36).slice(2, 11);
 	if (now - prevTime > 60 * 60 * 1000) {
 		localStorage.setItem(`views-${location.pathname}`, `${views}:${now}`);
 		try {
+			const isAdmin = localStorage.getItem("isAdmin");
 			const request = await fetch("https://views.twhlynch.me", {
 				method: "POST",
 				headers: { "content-type": "application/json" },
 				body: JSON.stringify({
 					url: location.href,
+					...(isAdmin && { ignore: true }),
 				}),
 			});
 
