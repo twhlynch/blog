@@ -14,7 +14,6 @@ type Props = CollectionEntry<"blog">;
 
 const post = Astro.props;
 const { Content } = await render(post);
-// TODO: add copy to code blocks and links to headers
 ---
 
 <BlogPost {...post.data}>
