@@ -18,14 +18,7 @@ const id = Math.random().toString(36).slice(2, 11);
 	let now = Date.now();
 
 	let prev = localStorage.getItem(`views-${location.pathname}`) ?? `0:0`;
-	let [prevViews, prevTime] = prev.split(":");
-
-	if (location.pathname === "/component-tests/") {
-		// go crazy
-		prevTime = 0;
-	}
-
-	let views = prevViews;
+	let [views, prevTime] = prev.split(":");
 
 	const counter = document.getElementById("view-count-" + id);
 	counter.textContent = views;
