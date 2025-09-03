@@ -9,7 +9,6 @@ tags: ["meta"]
 ## View counter
 
 The view counter increments for every new view with individuals counting as new views after an hour since they last viewed the page. This is implemented through a cloudflare KV ([Github](https://github.com/twhlynch/views))
-> The 1 hour cooldown is disabled here, go wild!
 
 ## Code Spotlighting
 
