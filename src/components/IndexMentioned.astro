@@ -28,9 +28,9 @@ const id = Math.random().toString(36).slice(2, 11);
 
 	let node;
 	while ((node = walker.nextNode())) {
-		const text = node.textContent;
-		const index = text.search(/index|idnex/i);
-		if (index !== -1) {
+		let text = node.textContent;
+		let index;
+		while ((index = text.search(/index|idnex/i)) !== -1) {
 			const span = document.createElement("span");
 			node.before(span); // idk why but i need to use this span
 
@@ -47,6 +47,8 @@ const id = Math.random().toString(36).slice(2, 11);
 			const newRefInstance = span.children[0]; // cos its moved i guess
 			newRefInstance.children[0].innerText = match.substring(0, 3);
 			newRefInstance.children[2].innerText = match.substring(3);
+
+			text = node.textContent;
 		}
 	}
 </script>
