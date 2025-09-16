@@ -165,6 +165,10 @@ pre {
 	border-radius: 8px;
 	font-size: 0.8em;
 	tab-size: 4;
+
+	&.wrap-code {
+		max-height: 20.5em;
+	}
 }
 pre > code {
 	all: unset;
