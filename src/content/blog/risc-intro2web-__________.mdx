@@ -11,7 +11,7 @@ canonical: "https://writeups.urisc.club/web/7___________/"
 
 The ██████ with ███████ has ██████ and the ███ ███ ███████. Report ID 6 is not to be ████████.
 
----
+___
 
 ## Approach
 
@@ -126,9 +126,9 @@ if __name__ == "__main__":
 
 After running for a few minutes, we get a success and find a sensitive note in 6.pdf:
 
-> In recognition of the extraordinary discretion required, authentication for all internal<br>
-> requests related to Project Backdoor will utilize the following passphrase:<br>
-> RISC{leftman_liquidity_forever_9a7f42}<br>
+> In recognition of the extraordinary discretion required, authentication for all internal<br />
+> requests related to Project Backdoor will utilize the following passphrase:<br />
+> RISC\{leftman_liquidity_forever_9a7f42}<br />
 > This string is not to be transmitted over open channels.
 
 Our flag is:
