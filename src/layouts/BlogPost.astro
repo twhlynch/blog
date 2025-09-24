@@ -14,6 +14,7 @@ import CopyCode from "@components/CopyCode.astro";
 import CodeHighlights from "@components/CodeHighlights.astro";
 import Spoiler from "@components/Spoiler.astro";
 import IndexMentioned from "@components/IndexMentioned.astro";
+import ViewSource from "@components/ViewSource.astro";
 
 type Props = CollectionEntry<"blog">["data"];
 
@@ -177,6 +178,7 @@ const { title, description, pubDate, updatedDate, heroImage, tags, canonical } =
 					<CopyCode />
 					<CodeHighlights />
 					<IndexMentioned />
+					<ViewSource />
 				</div>
 			</article>
 			<SuggestedPosts props={Astro.props} />

@@ -1,0 +1,20 @@
+---
+const id = Math.random().toString(36).slice(2, 11);
+---
+
+<div>
+	<a href="https://github.com/twhlynch/blog" id={"view-source-" + id}>View Source</a>
+</div>
+<script type="module" define:vars={{ id }} is:inline>
+	const sourceLink = document.getElementById("view-source-" + id);
+	sourceLink.href += `/blob/master/src/content/blog${location.pathname}.mdx?plain=1`;
+</script>
+<style>
+	div {
+		padding-top: 1em;
+		font-size: 0.8em;
+		width: 100%;
+		display: flex;
+		justify-content: flex-end;
+	}
+</style>
