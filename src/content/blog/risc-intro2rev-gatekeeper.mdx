@@ -1,0 +1,61 @@
+---
+title: "Gatekeeper"
+description: "RISC intro2rev challenge 1"
+pubDate: "Sep 24 2025"
+heroImage: "/hero/risc-index_Raaquilla.webp"
+tags: ["cyber", "ctf", "c"]
+---
+
+## Challenge description
+
+What password makes the program print "you got it!"?
+
+Flag format: RISC\{password}
+
+___
+
+## Approach
+
+Decompiling the binary gives us the following data declarations.
+
+```c
+void *_dso_handle = &_dso_handle;
+char *PASSWORD = "a472e82e048f12f622ef7cc554ec580a";
+_UNKNOWN edata;
+FILE *_bss_start;
+FILE *stdin;
+FILE *stderr;
+char completed_0;
+```
+
+And the following main function.
+
+```c
+int __fastcall main(int argc, const char **argv, const char **envp)
+{
+	char s[136];
+	unsigned __int64 v5;
+
+	v5 = __readfsqword(0x28u);
+	setvbuf(_bss_start, 0, 2, 0);
+	setvbuf(stderr, 0, 2, 0);
+	printf("Enter password: ");
+	if ( !fgets(s, 128, stdin) )
+		die("no input");
+	s[strcspn(s, "\n")] = 0;
+	if ( !strcmp(s, PASSWORD) )
+		puts("you got it!");
+	else
+		puts("nope");
+	return 0;
+}
+```
+We can see the program uses `strcmp` to compare our input to the password.
+This means `PASSWORD` *is* the password in plaintext.
+
+So our flag is:
+
+```
+RISC{a472e82e048f12f622ef7cc554ec580a}
+```
+

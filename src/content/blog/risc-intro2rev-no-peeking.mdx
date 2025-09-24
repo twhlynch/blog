@@ -1,0 +1,124 @@
+---
+title: "No Peeking"
+description: "RISC intro2rev challenge 2"
+pubDate: "Sep 24 2025"
+heroImage: "/hero/risc-index_Raaquilla.webp"
+tags: ["cyber", "ctf", "python", "c"]
+---
+
+## Challenge description
+
+Mwuahahahaha You fool! I've thwarted your simple tricks like gdb! It is nigh impossible to recover the password now!!!
+
+___
+
+## Approach
+
+Decompiling the program gives us the following relevant information.
+
+1. The main function.
+
+```c
+int sub_134A()
+{
+  return puts("you got it!");
+}
+
+__int64 __fastcall main(int a1, char **a2, char **a3)
+{
+  char s[72];
+  unsigned __int64 v5;
+
+  v5 = __readfsqword(0x28u);
+  setvbuf(stdout, 0, 2, 0);
+  setvbuf(stderr, 0, 2, 0);
+  sub_1269();
+  printf("password: ");
+  if ( !fgets(s, 64, stdin) )
+    return 0;
+  s[strcspn(s, "\n")] = 0;
+  if ( sub_12D0((__int64)s) )
+    sub_134A();
+  else
+    puts("nope");
+  return 0;
+}
+```
+We can see that the function runs `sub_12D0` on our input `s[72]` and if it returns true, prints `you got it!`.
+
+2. The validation function, `sub_12D0`.
+
+```c
+_BOOL8 __fastcall sub_12D0(__int64 a1)
+{
+  unsigned __int64 i;
+
+  for ( i = 0; i <= 0x39; ++i )
+  {
+    if ( ((unsigned __int8)(3 * (*(_BYTE *)(a1 + i) + 7)) ^ 0x42) != byte_2060[i] )
+      return 0;
+  }
+  return *(_BYTE *)(a1 + 58) == 0;
+}
+```
+Lets clean it up.
+
+```c
+bool sub_12D0(int *a1)
+{
+  for (int i = 0; i < 58; ++i )
+  {
+    if (((3 * (a1[i] + 7)) ^ 66) != byte_2060[i])
+      return 0;
+  }
+  return a1[58] == 0;
+}
+```
+We can see the function encodes each byte of our input with `(3 * (a1[i] + 7)) ^ 66` and compares it with `byte_2060`.
+
+```c
+_BYTE byte_2060[58] = { 73, -78, 76, -100, -60, 29, 32, 112, 3, 6,
+						121, 54, 8, 112, 29, 32, 112, 39, 41, 32, 
+						121, 27, 6, 30, 112, -126, -8, -10, -10, 
+						-22, -25, -11, 5, 124, -25, -11, -10, 3, 
+						-8, -11, -11, -10, -126, -1, -1, -1, -22, 
+						-8, 122, -20, 5, -8, -20, 122, 124, 122, 124, 
+						-50 };
+```
+Looks like `byte_2060` is our encrypted flag.
+
+### Python implementation
+
+We will brute force the flag by encoding every character in the same way `sub_12D0` does until it matches the encoded values.
+
+```python
+byte_2060 = [
+	 73,  -78, 76,   -100, -60,  29,   32,  112, 3,   6,
+	 121, 54,  8,    112,  29,   32,   112, 39,  41,  32,
+	 121, 27,  6,    30,   112,  -126, -8,  -10, -10, -22,
+	 -25, -11, 5,    124,  -25,  -11,  -10, 3,   -8,  -11,
+	 -11, -10, -126, -1,   -1,   -1,   -22, -8,  122, -20, 
+	 5,   -8,  -20,  122,  124,  122,  124, -50
+]
+
+def encode(x):
+    return (3 * (x + 7)) ^ 66
+
+password = []
+for i in range(58):
+    # test all possible characters
+    for x in range(256):
+        # & 0xFF to use uints
+        if encode(x) & 0xFF == byte_2060[i] & 0xFF:
+            password.append(x)
+            break
+
+print(bytes(password).decode("utf-8", errors="ignore"))
+```
+
+Our flag is:
+
+```
+RISC{no_debug_no_problem_9755106fc065d7665988817a3f73acac}
+```
+

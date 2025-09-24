@@ -1,0 +1,371 @@
+---
+title: "Script Kiddie"
+description: "RISC intro2rev challenge 6"
+pubDate: "Sep 24 2025"
+heroImage: "/hero/risc-index_Raaquilla.webp"
+tags: ["cyber", "ctf", "python", "obfuscation", "bash"]
+---
+
+## Challenge description
+
+How bad could a harmless python script be?
+
+___
+
+## Approach
+
+The script is heavily obfuscated and looks compiled making it extra hard to understand.
+
+To get some understanding of the script we can run
+```bash
+strings script_kiddie.py | tr -d '\f' | cut -c1-100
+```
+to extract all printable strings from the file. (and format them a little)
+
+We get the following
+```
+Kramer
+self
+_execute
+returnc
+_encode)
+./skid_bf.py
+__decode__
+Kramer.__decode__
+_byte
+_exec
+_bytes
+_decodec
+__import__
+_eval
+unhexlify
+decode)
+_systemr
+<genexpr>
+4Kramer.__init__.<locals>.<lambda>.<locals>.<genexpr>
+B;B>
+joinr
+split)
+_bitr
+<lambda>
+!Kramer.__init__.<locals>.<lambda>
+_rasputin)
+_kramerr
+(''.join(%s),
+evalr
+list
+encode
+exit)
+$abcdefghijklmnopqrstuvwxyz0123456789c
+errorsr2
+index
+len)
+ord)
+open
+__file__
+readr9
+_bits)
+HJ
+LP
+LV
+LV
+WX
+LY
+Z^
+Zd
+Zd
+eg
+Zh
+im
+is
+is
+tv
+iw
+``` `r
+__init__
+Kramer.__init__
+__name__
+__module__
+__qualname__
+__firstlineno__
+objectr
+execr
+float
+boolrN
+__static_attributes__
+f289b5bf/f289b683/f289b686/f289b685/f289b688/f289b68a/f289b4b7/f289b689/f289b68f/f289b689/ceb6/ceb6/
+_sparkleN)
+<module>r[
+```
+
+import WrapCode from "@components/WrapCode.astro";
+
+<WrapCode />
+
+Notably `f289b5bf/f289b683/f289b686/f289b685/f289...` is over 40k characters, and there seems to be quite a few references to some `Kramer` library.
+```
+Kramer.__decode__
+4Kramer.__init__.<locals>.<lambda>.<locals>.<genexpr>
+!Kramer.__init__.<locals>.<lambda>
+_kramerr
+Kramer.__init__
+```
+
+A quick google search for `kramer python` we find https://github.com/billythegoat356/Kramer, a Python Obfuscator called Kramer.
+
+The main logic works as follows.
+
+1. Load the target python script
+2. Generate a random int key from `3` to `1000000`
+3. Obfuscate the script using `Kramer` with the key
+4. Compile the script to a `.pyc` (python bytecode) file
+5. Renames the compiled script to `.py`
+
+`Kramer`'s obfuscation works as follows:
+
+1. Encrypts the content using `Kyrie`
+
+```python
+strings = "abcdefghijklmnopqrstuvwxyz0123456789"
+
+class Kyrie:
+    def encrypt(e: str):
+        e = Kyrie._ekyrie(e)
+        return Kyrie._encrypt(e)
+
+    def _ekyrie(text: str):
+        r = ""
+        for a in text:
+            if a in strings:
+                a = strings[strings.index(a) - 1]
+            r += a
+        return r
+
+    def _encrypt(text: str, key: str = None):
+        if type(key) == str:
+            key = sum(ord(i) for i in key)
+        t = [chr(ord(t) + key) if t != "\n" else "ζ" for t in text]
+        return "".join(t)
+
+class Key:
+    def encrypt(e: str, key: str):
+        e1 = Kyrie._ekyrie(e)
+        return Kyrie._encrypt(e1, key=key)
+
+_content_ = Key.encrypt(content, key=key)
+```
+
+Luckily for us, `Kyrie` also includes decryption functions we can use to reverse this.
+
+2. Encodes the content with `hexlify`
+
+```python
+_lines_sep_ = "/"
+content = _lines_sep_.join(hexlify(x.encode()).decode() for x in _content_)
+```
+
+This is probably the 40k character line we saw in the `strings` output.
+
+```
+f289b5bf/f289b683/f289b686/f289b685/f289b688/f289b68a/f289b4b7/... ...40k lines
+```
+
+3. Obfuscates the result with a bunch of garbage whilst keeping the script executable
+
+```python
+_names_ = ["_eval", "_exec", "_byte", "_bytes", "_bit", "_bits", "_system", "_encode", "_decode", "_delete", "_exit", "_rasputin", "_kramer"]
+_names_ = ["self." + name for name in _names_]
+shuffle(_names_)
+
+for k in range(12):
+	globals()[f"n_{str(k+1)}"] = _names_[k]
+
+_types_ = ("str", "float", "bool", "int")
+
+def _find(chars: str):
+	return "+".join(
+		f"_n7_[{list('abcdefghijklmnopqrstuvwxyz0123456789').index(c)}]"
+		for c in chars
+	)
+
+_1_ = (
+	rf"""_n5_""",
+	rf"""lambda _n9_:"".join(__import__(_n7_[1]+_n7_[8]+_n7_[13]+_n7_[0]+_n7_[18]+_n7_[2]+_n7_[8]+_n7_[8]).unhexlify(str(_n10_)).decode()for _n10_ in str(_n9_).split('{_lines_sep_}'))""",
+)
+_2_ = (
+	rf"""_n6_""",
+	r"""lambda _n1_:str(_n4_[_n2_](f"{_n7_[4]+_n7_[-13]+_n7_[4]+_n7_[2]}(''.join(%s),{_n7_[6]+_n7_[11]+_n7_[14]+_n7_[1]+_n7_[0]+_n7_[11]+_n7_[18]}())"%list(_n1_))).encode(_n7_[20]+_n7_[19]+_n7_[5]+_n7_[34])if _n4_[_n2_]==eval else exit()""",
+)
+_3_ = rf"""_n4_[_n2_]""", rf"""eval"""
+_4_ = (
+	rf"""_n1_""",
+	rf"""lambda _n1_:exit()if _n7_[15]+_n7_[17]+_n7_[8]+_n7_[13]+_n7_[19] in open(__file__, errors=_n7_[8]+_n7_[6]+_n7_[13]+_n7_[14]+_n7_[17]+_n7_[4]).read() or _n7_[8]+_n7_[13]+_n7_[15]+_n7_[20]+_n7_[19] in open(__file__, errors=_n7_[8]+_n7_[6]+_n7_[13]+_n7_[14]+_n7_[17]+_n7_[4]).read()else"".join(_n1_ if _n1_ not in _n7_ else _n7_[_n7_.index(_n1_)+1 if _n7_.index(_n1_)+1<len(_n7_)else 0]for _n1_ in "".join(chr(ord(t)-{key})if t!="ζ"else"\n"for t in _n5_(_n1_)))""",
+)
+_5_ = rf"""_n7_""", rf"""exit()if _n1_ else'abcdefghijklmnopqrstuvwxyz0123456789'"""
+_6_ = rf"""_n8_""", rf"""lambda _n12_:_n6_(_n1_(_n12_))"""
+_all_ = [_1_, _2_, _3_, _4_, _5_, _6_]
+shuffle(_all_)
+
+_vars_content_ = ",".join(s[0] for s in _all_)
+_valors_content_ = ",".join(s[1] for s in _all_)
+_vars_ = _vars_content_ + "=" + _valors_content_
+_final_content_ = (
+	rf"""class Kramer():
+def __decode__(self:object,_execute:str)->exec:return(None,_n8_(_execute))[0]
+def __init__(self:object,_n1_:{choice(_types_)}=False,_n2_:{choice(_types_)}=0,*_n3_:{choice(_types_)},**_n4_:{choice(_types_)})->exec:
+{_vars_}
+return self.__decode__(_n4_[(_n7_[-1]+'_')[-1]+_n7_[18]+_n7_[15]+_n7_[0]+_n7_[17]+_n7_[10]+_n7_[11]+_n7_[4]])
+Kramer(_n1_=False,_n2_=False,_sparkle='''{content}''')""".strip()
+	.replace("_n1_", n_1.removeprefix("self."))
+	.replace("_n2_", n_2.removeprefix("self."))
+	.replace("_n3_", n_3.removeprefix("self."))
+	.replace("_n4_", n_4.removeprefix("self."))
+	.replace("_n5_", n_5)
+	.replace("_n6_", n_6)
+	.replace("_n7_", n_7)
+	.replace("_n8_", n_8)
+	.replace("_n9_", n_9.removeprefix("self."))
+	.replace("_n10_", n_10.removeprefix("self."))
+	.replace("_n12_", n_12.removeprefix("self."))
+)
+```
+
+<WrapCode />
+
+Lucky for us, the `key` is included in the final result.
+```python
+fr"""... ...for _n1_ in "".join(chr(ord(t)-{key})if t!="ζ"else"\n"for t in _n5_(_n1_)))"""
+```
+
+We can extract the key from the script by dissasembling it and looking for a value that looks like a key.
+This is trivial in python using `marshal` and `dis`.
+```python
+import dis
+import marshal
+
+with open("script_kiddie.py", "rb") as f:
+    f.read(16)  # skip header
+    code_object = marshal.load(f)
+    dis.dis(code_object)
+```
+We can look for a `LOAD_CONST` with a reasonable value between 3 and 1000000.
+```bash
+python3 dissasemble.py | grep LOAD_CONST
+```
+
+```log
+               LOAD_CONST               0 (1)
+               LOAD_CONST               0 (1)
+       L4:     LOAD_CONST               1 (0)
+               LOAD_CONST               0 ('ζ')
+               LOAD_CONST               1 (564503)
+       L3:     LOAD_CONST               2 ('\n')
+```
+
+`LOAD_CONST 1 (564503)` looks like it, especially with `'ζ'` and `'\n'` nearby just like in the script.
+
+Now we can run a script to `unhexlify` and `dkyrie` the script giving us the original.
+
+```python
+import binascii
+
+strings = "abcdefghijklmnopqrstuvwxyz0123456789"
+
+
+def _dkyrie(text: str):
+    r = ""
+    for a in text:
+        if a in strings:
+            i = strings.index(a) + 1
+            if i >= len(strings):
+                i = 0
+            a = strings[i]
+        r += a
+    return r
+
+
+def _decrypt(text: str, key: int):
+    return "".join(chr(ord(t) - key) if t != "ζ" else "\n" for t in text)
+
+
+def decrypt(e: str, key: int):
+    text = _decrypt(e, key)
+    return _dkyrie(text)
+
+
+with open("script_kiddie.py", "rb") as f:
+    obfuscated = f.read().decode("ascii", errors="ignore")
+
+# remove "random garbage"
+deobfuscated = obfuscated.split("/")
+# unhexlify
+decoded = ""
+for hex in deobfuscated:
+    try:
+        decoded += binascii.unhexlify(hex).decode()
+    except Exception:
+        pass
+
+# kylie decrypt
+key = 564503
+decrypted = decrypt(decoded, key)
+
+with open("script_kiddie_original.py", "w") as f:
+    f.write(decrypted)
+```
+> Note: `obfuscated.split("/")` keeps the rest of the script at parts 
+of the first and last hex bytes so we will be missing the first and last 
+characters of the output, but this shouldnt matter since we expect it 
+to be wrapped in RISC{}.
+
+Opening `script_kiddie_original.py` we can see the original script.
+```python
+import sys
+
+s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}_"
+
+def main():
+    inp = input("enter flag: ").strip()
+    if len(inp) != 87:
+        print("nope"); sys.exit(0)
+
+    if inp[0]  != s[43]: print("nope"); sys.exit(0)
+    if inp[1]  != s[34]: print("nope"); sys.exit(0)
+    if inp[2]  != s[44]: print("nope"); sys.exit(0)
+    if inp[3]  != s[28]: print("nope"); sys.exit(0)
+    if inp[4]  != s[62]: print("nope"); sys.exit(0)
+	...
+
+	...
+    if inp[83] != s[1]:  print("nope"); sys.exit(0)
+    if inp[84] != s[57]: print("nope"); sys.exit(0)
+    if inp[85] != s[3]:  print("nope"); sys.exit(0)
+    if inp[86] != s[63]: print("nope"); sys.exit(0)
+
+    print("you got it!")
+
+if __name__ == "__main__":
+    main()
+```
+
+We can use `sed` to create a script that prints the output instead of comparing it.
+
+```bash
+cat script_kiddie_original.py | grep "if inp" | sed "s/.*s\(\[[0-9]*\]\).*/print('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}_'\1, end='')/" > script_kiddie_flag.py
+```
+
+```python
+print('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}_'[43], end='')
+print('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}_'[34], end='')
+print('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}_'[44], end='')
+...
+print('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}_'[57], end='')
+print('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}_'[3], end='')
+print('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}_'[63], end='')
+```
+Running it gives us our flag:
+
+```
+RISC{Kramer_isnt_really_a_next_level_obfuscation_tool_c1f57c9658f9e30ee3ce050f3a039b5d}
+```
+

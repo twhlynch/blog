@@ -66,4 +66,54 @@ Racing a go server to get access to a restricted file
 
 ## Intro2rev
 
-Coming soon..?
+Generally when I refer to decompiling, I am using IDA, aka Hex-Rays, often through the [dogbolt](https://dogbolt.org) Decompiler Explorer.
+
+#### Gatekeeper
+[-> Writeup](/risc-intro2rev-gatekeeper/)
+
+*What password makes the program print "you got it!"?*
+
+Decompilation to get a plaintext password
+
+#### No Peeking
+[-> Writeup](/risc-intro2rev-no-peeking/)
+
+*Mwuahahahaha You fool! I've thwarted your simple tricks like gdb! It is nigh impossible to recover the password now!!!*
+
+Brute force a simple decompiled algorithm
+
+#### Crack Me V1
+[-> Writeup](/risc-intro2rev-crack-me-v1/)
+
+*EvilCorp has made a ISO-9001 SOC2(Type II) GDPR AI-Guard Anti-tamper software license tool!
+Can you find a serial that cracks it?*
+
+Reversing a decompiled encryption algorithm
+
+#### Win32FakeAgent
+[-> Writeup](/risc-intro2rev-win-32-fake-agent/)
+
+*Very legit batch script.*
+
+Deobfuscating a batch script
+
+#### Crack Me V2
+[-> Writeup](/risc-intro2rev-crack-me-v2/)
+
+*EvilCorp has upgraded their license validator! It's now AI powered quantum resistant dark blockchain infused!*
+
+V1 but + 1
+
+#### Script Kiddie
+[-> Writeup](/risc-intro2rev-script-kiddie/)
+
+*How bad could a harmless python script be?*
+
+Obfuscated python script
+
+#### Totally Not Malware
+[-> Writeup](/risc-intro2rev-totally-not-malware/)
+
+*This definitely isn't malware :)*
+
+This time decompiling doesnt quite work.

@@ -1,0 +1,147 @@
+---
+title: "Crack Me V1"
+description: "RISC intro2rev challenge 3"
+pubDate: "Sep 24 2025"
+heroImage: "/hero/risc-index_Raaquilla.webp"
+tags: ["cyber", "ctf", "python", "c"]
+---
+
+## Challenge description
+
+EvilCorp has made a ISO-9001 SOC2(Type II) GDPR AI-Guard Anti-tamper software license tool!
+
+Can you find a serial that cracks it?
+
+___
+
+## Approach
+
+Decompiling the binary gives us a few key pieces of information.
+
+1. The overall functionality of the validation.
+
+```c
+int __fastcall main(int argc, const char **argv, const char **envp) {
+	char s[136];
+	...
+	if (!fgets(s, 128, stdin))
+		return 0;
+	s[strcspn(s, "\n")] = 0;
+	if (verify(s))
+		puts("you got it!");
+	else
+		puts("nope");
+	return 0;
+}
+```
+We can see that the main functionality of the program is in `verify` which
+validates our input `s[136]`.
+
+2. The verification logic.
+
+```c
+_BOOL8 __fastcall verify(const char *a1) {
+	if (!check_len(a1, 56))
+		return 0;
+	if (check_sum((__int64)a1, 4862))
+		return check_serial((__int64)a1);
+	return 0;
+}
+```
+`verify` calls `check_len(a1, 56)` telling us the password is 56 characters, 
+and we can see the main check we will need to reverse is `check_serial`.
+
+3. The first part of the encryption, `check_serial`.
+
+```c
+_BOOL8 __fastcall check_serial(__int64 a1) {
+	unsigned __int64 i;
+
+	for (i = 0; i <= 0x37; ++i) {
+		if ((unsigned __int8)rol8(11 * (unsigned __int8)i +
+					(*(_BYTE *)(a1 + i) ^ key_1[(7 * i + 3) % 7]),
+					3) != tgt_0[i])
+		return 0;
+	}
+	return *(_BYTE *)(a1 + 56) == 0;
+}
+```
+This is quite hard to read so lets clean it up.
+
+```c
+bool check_serial(int *a1) {
+	for (int i = 0; i < 56; ++i) {
+		int result = rol8(11 * i + (a1[i] ^ key_1[(7 * i + 3) % 7]), 3);
+		if (result != tgt_0[i]) return 0;
+	}
+	return a1[56] == 0;
+}
+```
+
+Okay thats a little better. So we can see that it checks each character, putting it through 
+some math, combining it with part of `key_1`, and running `rol8` on it, then it compares the result 
+to `tgt_0[i]`.
+
+4. The encrypted flag, and key.
+
+```c
+_BYTE key_1[38] = {19, 55, -64, -34, 66, -103, -85, 0, 0, 0, 0, 0, 0,
+                   0,  0,  0,   0,   0,  0,    0,   0, 0, 0, 0, 0, 0,
+                   0,  0,  0,   0,   0,  0,    0,   0, 0, 0, 0, 0}
+_BYTE tgt_0[56] = {100, 21,  29,   -11,  -114, -18,  -97, -49, -50, -48,
+                   -40, -41, -95,  2,    34,   49,   107, 59,   107, -5,
+                   52,  -60, -101, -43,  6,    -106, 56,  -80,  -32, 89,
+                   56,  -15, -64,  -78,  -127, -125, -69, -94,  92,  99,
+                   29,  93,  108,  38,   94,   101,  -83, -105, -65, -58,
+                   23,  -64, 57,   -127, 96,   0}
+```
+We can see that `tgt_0` is probably the encrypted flag, and `key_1` is the key used in the encryption.
+
+5. the main encryption algorithm.
+
+```c
+__int64 __fastcall rol8(unsigned __int8 a1, char a2) {
+	return (a1 << (a2 & 7)) | (unsigned int)((int)a1 >> (8 - (a2 & 7)));
+}
+```
+The main encryption algorithm `rol8` is also recovered.
+
+So the program takes our input, encrypts it, and compares it to the encrypted flag.
+
+We can reverse the encryption in order to decrypt the flag.
+
+### Python implementation
+
+```python
+# we can omit trailing 0s since key is accessed with key[... % 7]
+key = [ 19, 55, -64, -34, 66, -103, -85 ]
+tgt = [
+    100, 21,  29,   -11,  -114, -18,  -97, -49,  -50, -48,
+    -40, -41, -95,  2,    34,   49,   107, 59,   107, -5,
+    52,  -60, -101, -43,  6,    -106, 56,  -80,  -32, 89,
+    56,  -15, -64,  -78,  -127, -125, -69, -94,  92,  99,
+    29,  93,  108,  38,   94,   101,  -83, -105, -65, -58,
+    23,  -64, 57,   -127, 96,   0
+]
+
+# a2 is only ever 3 so we can omit the '& 7's
+def rev_rol8(a1, a2):
+	# reverse (a1 << (a2 & 7)) | (a1 >> (8 - (a2 & 7)))
+	return ((a1 >> a2) | (a1 << (8 - a2)) & 0xFF)
+
+flag = []
+for i in range(56):
+	result = rev_rol8(tgt[i] & 0xFF, 3)
+	# reverse 11 * i + (a1[i] ^ key_1[(7 * i + 3) % 7]
+	result = ((result - 11 * i) & 0xFF) ^ (key[(7 * i + 3) % 7] & 0xFF)
+	flag.append(result)
+
+print(bytes(flag).decode("ascii", errors="ignore"))
+```
+
+Running the script gives us the flag:
+
+```
+RISC{xor_is_not_crypto_cfa7362c7f5d15c7a56a59ce39cb957d}
+```
+

