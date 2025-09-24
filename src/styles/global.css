@@ -189,8 +189,9 @@ hr {
 	width: 2em;
 	margin-inline: auto;
 }
-ul {
+ul, ol {
 	padding-left: 1em;
+	padding-bottom: 1em;
 }
 @media (max-width: 65ch) {
 	body {
