@@ -131,6 +131,19 @@ input {
 }
 table {
 	width: 100%;
+	background-color: #ffffff06;
+	overflow: hidden;
+	border-radius: 10px;
+	border-spacing: 0;
+	border-collapse: separate;
+
+	td,
+	th {
+		padding-inline: 10px;
+	}
+	tr:nth-child(2n) {
+		background-color: #ffffff09;
+	}
 }
 img {
 	max-width: 100%;
@@ -189,7 +202,8 @@ hr {
 	width: 2em;
 	margin-inline: auto;
 }
-ul, ol {
+ul,
+ol {
 	padding-left: 1em;
 	padding-bottom: 1em;
 }
