@@ -6,9 +6,9 @@ heroImage: "/hero/index-rabbit_yoyodud3.webp"
 tags: ["grab", "asm", "hidden"]
 ---
 
-Recently GRAB has added code blocks allowing building programs with a block
+Recently, GRAB has added code blocks, allowing building programs with a block
 coding interface for writing assembly. This post will be an introduction
-to how to use it from a more technical point of view; writing code to copy into
+to how to use it from a more technical point of view: writing code to copy into
 the game, and using the JSON Editor to write complex programs.
 
 ### Structure of a GASM Program
@@ -32,18 +32,18 @@ SET R0 10
 This instruction uses the `SET` operator to assign the constant value `10` to the register
 `R0`.
 
-The **operator** defines what action is performed (for example `SET`, `ADD`, `MUL`, or `GOTO`).
+The **operator** defines what action is performed (for example, `SET`, `ADD`, `MUL`, or `GOTO`).
 The **operands** are the values the operator works on. These can be:
 
 - Working registers (`R0`-`R7`)
-- Object connections (`Obj.Pos.X`, `Trg.Act`, etc)
+- Object connections (`Obj.Pos.X`, `Trg.Act`, etc.)
 - Constant values (`10`, `0.5`, `-3`)
 
 The number of operands depends on the operator. Some instructions take no operands,
-while others take one, two, or three. Its common that the first operand is the destination.
+while others take one, two, or three. It's common that the first operand is the destination.
 
 Comments start with a semicolon (`;`). Everything after the semicolon on a line is ignored
-by when pasting into GRAB.
+when pasting into GRAB.
 
 ```gasm
 SET R0 10 ; set initial speed
@@ -53,7 +53,7 @@ Comments are highly recommended to explain longer programs.
 
 ### A simple program
 
-Before we dive into writing programs with GASM, lets break down a simple
+Before we dive into writing programs with GASM, let's break down a simple
 program.
 
 Below is a program written in GASM.
@@ -61,32 +61,32 @@ Below is a program written in GASM.
 ```gasm
 ; infinitely move 'Obj' upwards
 
-SET R0 10                      ; speed to move
+SET R0 10                      ; 3) speed to move
 
-LABEL loop                     ; label to jump back to
-	ADD Obj.Pos.Y Obj.Pos.Y R0 ; add the speed to the position
-	SLEEP 0                    ; sleep till next frame
-GOTO loop                      ; loop forever
+LABEL loop                     ; 5) label to jump back to
+	ADD Obj.Pos.Y Obj.Pos.Y R0 ; 6) add the speed to the position
+	SLEEP 0                    ; 7) sleep till next frame
+GOTO loop                      ; 8) loop forever
 ```
 
-Line 1 as well as the text after each line, is a comment. It will be removed
-when pasting into GRAB and is handy to explain what code is doing.
+Line 1, as well as the text after each line, is a comment. It will be removed
+when pasting into GRAB, and is handy to explain what code is doing.
 
 Line 3 sets the `R0` register to the constant value `10`.
 
-Line 5 creates a `LABEL` called `loop` which can be jumped to later on 
+Line 5 creates a `LABEL` called `loop`, which can be jumped to later on 
 to create an infinite loop.
 
-Line 6 adds `R0` (which is 10) to `Obj.Pos.Y` and put the result into
+Line 6 adds `R0` (which is 10) to `Obj.Pos.Y` and puts the result into
 `Obj.Pos.Y`. `Y` is up and down; adding to it means `Obj` will move upwards.
 
-Line 7 uses a very common trick of `SLEEP 0` which halts the program until
+Line 7 uses a very common trick of `SLEEP 0`, which halts the program until
 the next frame, meaning the loop will only run once per frame.
 
 Line 8 uses `GOTO` to jump back to `loop`. This creates an infinite loop.
 
-Its important te remember that this program is equivelant to the following, but
-by using comments and indenting it becomes much more readable.
+It's important to remember that this program is equivelant to the following, but
+by using comments and indenting, it becomes much more readable.
 
 ```gasm
 SET R0 10
@@ -103,7 +103,7 @@ The primary way to store and manipulate data in GASM is through
 named `R0` through `R7`.
 These registers can be read from and written to.
 
-Registers do not have a fixed meaning, their purpose is entirely
+Registers do not have a fixed meaning; their purpose is entirely
 defined by how you use them.
 
 ```gasm
@@ -120,7 +120,7 @@ SET R1 6     ; R1 = 6
 DIV R0 R0 R1 ; R0 = R0 / R1 -> 2
 ````
 
-Commonly programs will:
+Commonly, programs will:
 
 1. Load values from connections into registers
 2. Perform calculations using registers
@@ -135,8 +135,8 @@ but be aware that the object exists physically.
 ### Connections
 
 You can add connections to objects that add connected registers.
-When you add a connection you can connect the position, rotation, or active state,
-and can name the connection.
+When you add a connection, you can connect the position, rotation,
+or active state, and can name the connection.
 
 This creates a register such as
 ```gasm
@@ -145,15 +145,18 @@ Obj.Rot.Y ; object rotation
 Trg.Act ; trigger is active
 ```
 
-Position and rotation are readable and writable and active is readonly
+Position and rotation are readable and writable, and active is read only
 and only for triggers.
 
 Connections can be used anywhere a register can be, except for `Act`
 connections which cannot be modified in code.
 
 > NOTE:
-rotations are calculated in X Y Z order. This will probably not effect you, but may come
-in handy if you know what it means.
+Rotations are calculated in X -> Y -> Z order. This means when the game computes
+how an object should be rotated based on the rotation values, the object is
+first rotated around the X axis, then the result of that rotation is rotated
+around the Y axis, and finally around the Z axis, so changing one rotation
+axis can affect how subsequent rotations behave.
 
 ### Operators
 
@@ -214,7 +217,7 @@ SWAP R0 R1
 
 ### Arithmetic Operators
 
-Arithmatic operators take three arguments and set the first to the result of the second and the third.
+Arithmetic operators take three arguments and set the first to the result of the second and the third.
 The first is a writable register,
 and the second and third are readable registers.
 
@@ -301,8 +304,8 @@ Comparison operators take three arguments and set the first to the result
 of the second and the third. The first is a writable register,
 and the second and third are readable registers.
 Comparison operators will always set the destination register to either
-0 or 1 where 1 means the expression is true, and 0 means it is false.
-This means they work directly with `IF` which checks if a register is not 0.
+0 or 1, where 1 means the expression is true, and 0 means it is false.
+This means they work directly with `IF`, which checks if a register is not 0.
 
 - `EQUAL` Checks if A equals B
 - `LESS` Checks if A is less than B
@@ -322,10 +325,10 @@ NOT R0 1       ; R0 = !1 -> 0
 
 ### Control Flow Operators
 
-Control flow allow for jumping around the code to create
+Control flow operators allow for jumping around the code to create
 loops, conditional code, or functions.
 
-For example a loop that makes an object unable to pass below 0 height.
+For example, a loop that makes an object unable to pass below 0 height.
 
 ```gasm
 LABEL loop ; infinite loop
@@ -341,7 +344,7 @@ LABEL loop ; infinite loop
 GOTO loop
 ```
 
-Personally I prefer this kind of pattern of having reversed conditions,
+Personally, I prefer this kind of pattern of having reversed conditions,
 (if not less than 0), and jumping over logic, but some prefer to have the
 conditional code separated more like a function.
 
@@ -361,7 +364,6 @@ LABEL limit
 	; set Y to 0
 	SET Obj.Pos.Y 0
 	GOTO after_limit
-
 ```
 
 ##### LABEL
@@ -403,7 +405,7 @@ RAND R0 10
 ```
 
 ##### SLEEP
-`SLEEP` pauses execution for a given amount of time in ms.
+`SLEEP` pauses execution for a given amount of time in milliseconds.
 > SLEEP 0 will delay execution until the next frame.
 ```gasm
 SLEEP 1000 ; sleep for 1 second
@@ -417,7 +419,7 @@ certain information about the current state of the program.
 ##### ProgramCounter
 
 ProgramCounter is the index of the current instruction being read. The line number.
-You write to it to jump to a specific line number, which coupled with reading and saving it,
+You write to it to jump to a specific line number, which, coupled with reading and saving it,
 can allow implementing callable functions. 
 
 > As of writing this, ProgramCounter is not accessable.
@@ -425,8 +427,8 @@ can allow implementing callable functions.
 ##### DeltaTime
 
 DeltaTime stores the time since the last frame. It should be used to make moving objects
-smooth and consistent by multiplying movment by the DeltaTime to ensure the framerate doesnt
-effect the speed.
+smooth and consistent by multiplying movement by the DeltaTime to ensure the framerate doesnt
+affect the speed.
 
 ##### Others
 
@@ -438,11 +440,11 @@ effect the speed.
 
 #### Infinite loop with sleep 0
 
-Commonly you will want to have something run every frame.
+Commonly, you will want to have something run every frame.
 The way to do that is to create a `LABEL` and a `GOTO` that wrap around code to run infinitely.
 
-It is important to also include a `SLEEP 0` at the end of the loop to ensure the loop only runs once per frame.
-Without `SLEEP 0`, the program will run up to 500 instructions and often that is not what you want.
+It is also important to include a `SLEEP 0` at the end of the loop to ensure the loop only runs once per frame.
+Without `SLEEP 0`, the program will run up to 500 instructions, and often that is not what you want.
 
 ```gasm
 LABEL loop
@@ -454,7 +456,7 @@ GOTO loop
 
 As explained above, DeltaTime stores the time since the last frame.
 
-Generally when moving something, you want it to be at  constant rate.
+Generally, when moving something, you want it to be at a constant rate.
 
 If you create a simple movement loop:
 
@@ -468,9 +470,12 @@ GOTO loop
 The object will move 0.1m per frame.
 
 If you have a stable framerate that will be 75 fps * 0.1m = 7.5m/s.
-But if you are lagging, then the object will move slower because there are less frames.
+But if you are lagging, then the object will move slower because there
+are less frames.
 
-The way to counteract this to make the movement appear smooth, and be consistent locally and across multiplayer is to multiply the movemenbt by DeltaTime.
+The way to counteract this to make the movement appear smooth, and be
+consistent locally and across multiplayer, is to multiply the movement
+by DeltaTime.
 
 ```gasm
 LABEL loop
@@ -482,8 +487,8 @@ GOTO loop
 
 ### Macros
 
-The JSON Editor has a simple but very powerful extra tool on topp of GASM.
-That is preprocessor macros that allow for generating much more complex programs.
+The JSON Editor has a simple but very powerful extra tool on top of GASM.
+That is, preprocessor macros that allow for generating much more complex programs.
 
 | Macro | Arg 1 | Arg 2 | Arg 3 | Arg 4 | Description |
 |------|-----|-------|------|------|-------------|
@@ -513,18 +518,19 @@ SET R6 10 ; then - 10 to get -10 to 10
 	SUB Obj#n.Pos.Z R2 R6
 #END
 ```
-This code uses `#FOR` to duplicate code that sets the `X`, `Y` , and `Z` of an object to a random value `-10` through `10`.
-The for loop creates a variable `n` at `1` and loops up to `3`. Step is omitted so it is 1.
+This code uses `#FOR` to duplicate code that sets the `X`, `Y`, and `Z`
+of an object to a random value `-10` through `10`.
+The for loop creates a variable `n` at `1` and loops up to `3`. Step is omitted, so it is 1.
 For each loop it sets `Obj#n.Pos.X` where `#n` will be replaced with the current value of `n`. e.g., `Obj1.Pos.X`.
 
-There is also an `#IF` that runs when `n == 3`. This means each loop will check that condition and if it is true,
-will add the `SET R0 10` line which forces the ojects `X` position to be `0`.
+There is also an `#IF` that runs when `n == 3`. This means each loop will check that condition, and if it is true,
+will add the `SET R0 10` line, which forces the oject's `X` position to be `0`.
 
 `IF` and `FOR` variable arguments must be alphanumeric.
 `IF` and `FOR` value arguments must be either a number, an existing variable, or a single operator expression such as `i*j`.
 `IF` operators can be `==`, `<`, `<=`, `>`, `>=`, or `!=`.
 
-The resulting GASM code will set 3 objects to random -10 - 10 positions but object 3's X will always be 0:
+The resulting GASM code will set 3 objects to random -10 - 10 positions, but object 3's X will always be 0:
 
 ```gasm
 SET R7 20
@@ -557,5 +563,5 @@ If you found this guide useful, share it around!
 If you have some feedback, let me know!
 I appreciate it :)
 
-Also if you are here at the time of publishing this,
+Also, if you are here at the time of publishing this,
 Merry christler or whatever.
