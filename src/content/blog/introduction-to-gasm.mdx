@@ -1,0 +1,561 @@
+---
+title: "Intro to GASM"
+description: "An introduction to writing GRAB Assembly"
+pubDate: "Dec 22 2025"
+heroImage: "/hero/index-rabbit_yoyodud3.webp"
+tags: ["grab", "asm", "hidden"]
+---
+
+Recently GRAB has added code blocks allowing building programs with a block
+coding interface for writing assembly. This post will be an introduction
+to how to use it from a more technical point of view; writing code to copy into
+the game, and using the JSON Editor to write complex programs.
+
+### Structure of a GASM Program
+
+In GASM, like most assembly style languages, a program is a list of instructions.
+Each line represents one instruction, and instructions are executed from top to bottom
+unless control flow instructions (`GOTO`, `IF`, `END`) jump the `ProgramCounter`.
+
+An instruction generally has the following form:
+
+```bash
+OPERATOR OPERAND OPERAND ...
+```
+
+For example:
+
+```gasm
+SET R0 10
+```
+
+This instruction uses the `SET` operator to assign the constant value `10` to the register
+`R0`.
+
+The **operator** defines what action is performed (for example `SET`, `ADD`, `MUL`, or `GOTO`).
+The **operands** are the values the operator works on. These can be:
+
+- Working registers (`R0`-`R7`)
+- Object connections (`Obj.Pos.X`, `Trg.Act`, etc)
+- Constant values (`10`, `0.5`, `-3`)
+
+The number of operands depends on the operator. Some instructions take no operands,
+while others take one, two, or three. Its common that the first operand is the destination.
+
+Comments start with a semicolon (`;`). Everything after the semicolon on a line is ignored
+by when pasting into GRAB.
+
+```gasm
+SET R0 10 ; set initial speed
+```
+
+Comments are highly recommended to explain longer programs.
+
+### A simple program
+
+Before we dive into writing programs with GASM, lets break down a simple
+program.
+
+Below is a program written in GASM.
+
+```gasm
+; infinitely move 'Obj' upwards
+
+SET R0 10                      ; speed to move
+
+LABEL loop                     ; label to jump back to
+	ADD Obj.Pos.Y Obj.Pos.Y R0 ; add the speed to the position
+	SLEEP 0                    ; sleep till next frame
+GOTO loop                      ; loop forever
+```
+
+Line 1 as well as the text after each line, is a comment. It will be removed
+when pasting into GRAB and is handy to explain what code is doing.
+
+Line 3 sets the `R0` register to the constant value `10`.
+
+Line 5 creates a `LABEL` called `loop` which can be jumped to later on 
+to create an infinite loop.
+
+Line 6 adds `R0` (which is 10) to `Obj.Pos.Y` and put the result into
+`Obj.Pos.Y`. `Y` is up and down; adding to it means `Obj` will move upwards.
+
+Line 7 uses a very common trick of `SLEEP 0` which halts the program until
+the next frame, meaning the loop will only run once per frame.
+
+Line 8 uses `GOTO` to jump back to `loop`. This creates an infinite loop.
+
+Its important te remember that this program is equivelant to the following, but
+by using comments and indenting it becomes much more readable.
+
+```gasm
+SET R0 10
+LABEL loop
+ADD Obj.Pos.Y Obj.Pos.Y R0
+SLEEP 0
+GOTO loop
+```
+
+### Working Registers
+
+The primary way to store and manipulate data in GASM is through
+**working registers**. GASM provides eight working registers,
+named `R0` through `R7`.
+These registers can be read from and written to.
+
+Registers do not have a fixed meaning, their purpose is entirely
+defined by how you use them.
+
+```gasm
+; set R0 to a constant value
+SET R0 10    ; R0 = 10
+
+; perform addition using registers
+ADD R0 R0 2  ; R0 = R0 + 2 -> 12
+
+; use another register
+SET R1 6     ; R1 = 6
+
+; divide R0 by R1
+DIV R0 R0 R1 ; R0 = R0 / R1 -> 2
+````
+
+Commonly programs will:
+
+1. Load values from connections into registers
+2. Perform calculations using registers
+3. Write the final result back to a connection
+
+Because registers are limited (8), it’s good practice to reuse them carefully
+and add comments describing what each register is currently being used for.
+
+If you need more than 8, you can use connections as extra places to store data,
+but be aware that the object exists physically.
+
+### Connections
+
+You can add connections to objects that add connected registers.
+When you add a connection you can connect the position, rotation, or active state,
+and can name the connection.
+
+This creates a register such as
+```gasm
+Obj.Pos.X ; object position
+Obj.Rot.Y ; object rotation
+Trg.Act ; trigger is active
+```
+
+Position and rotation are readable and writable and active is readonly
+and only for triggers.
+
+Connections can be used anywhere a register can be, except for `Act`
+connections which cannot be modified in code.
+
+> NOTE:
+rotations are calculated in X Y Z order. This will probably not effect you, but may come
+in handy if you know what it means.
+
+### Operators
+
+| Instruction | Op 1 | Op 2 | Op 3 | Description |
+|---------|-------|-------|---|---------------------|
+| SET     | DST   | SRC   |   | DST = SRC           |
+| SWAP    | A     | B     |   | swap A and B        |
+| ADD     | DST   | A     | B | DST = A + B         |
+| SUB     | DST   | A     | B | DST = A - B         |
+| MUL     | DST   | A     | B | DST = A * B         |
+| DIV     | DST   | A     | B | DST = A / B         |
+| MOD     | DST   | A     | B | DST = A % B         |
+| FLOOR   | DST   | A     |   | DST = ⌊A⌋           |
+| SQRT    | DST   | A     |   | DST = √A            |
+| EQUAL   | DST   | A     | B | DST = A == B        |
+| LESS    | DST   | A     | B | DST = A < B         |
+| GREATER | DST   | A     | B | DST = A > B         |
+| AND     | DST   | A     | B | DST = A && B        |
+| OR      | DST   | A     | B | DST = A \|\| B      |
+| NOT     | DST   | A     |   | DST = !A            |
+| SIN     | DST   | A     |   | DST = sin(A)        |
+| COS     | DST   | A     |   | DST = cos(A)        |
+| ATAN2   | DST   | A     | B | DST = angle to (B,A) |
+| LABEL   | LABEL |       |   | define a label      |
+| GOTO    | LABEL |       |   | jump to a label     |
+| IF      | REG   | LABEL |   | jump to label if REG != 0 |
+| END     |       |       |   | halt the program    |
+| RAND    | DST   | N     |   | DST = random 0 to N-1 |
+| SLEEP   | MS    |       |   | sleep for MS        |
+
+### Data Operators
+
+These are operators that simply move data in registers.
+
+##### SET
+
+The `SET` operator takes two arguments and copies the second's value
+into the first.
+The first is a writable register to set,
+and the second is a register or constant value to copy the value from.
+
+```gasm
+; R0 = 0
+SET R0 10
+; R0 = 10
+```
+
+##### SWAP
+
+The `SWAP` operator takes two arguments and swaps their values.
+Both are writable registers.
+
+```gasm
+; R0 = 1 ; R1 = 2
+SWAP R0 R1
+; R0 = 2 ; R1 = 1
+```
+
+### Arithmetic Operators
+
+Arithmatic operators take three arguments and set the first to the result of the second and the third.
+The first is a writable register,
+and the second and third are readable registers.
+
+- `ADD` will add two values
+- `SUB` will subtract two values
+- `MUL` will multiply two values
+- `DIV` will divide two values
+- `MOD` will modulo two values (remainder)
+
+```gasm
+ADD R0 10 3 ; R0 = 10 + 3 -> 13
+SUB R0 10 3 ; R0 = 10 - 3 -> 7
+MUL R0 10 3 ; R0 = 10 * 3 -> 30
+DIV R0 10 3 ; R0 = 10 / 3 -> 3.333...
+MOD R0 10 3 ; R0 = 10 % 3 -> 1
+```
+
+### Other Math Operators
+
+##### FLOOR
+
+The `FLOOR` operator takes two arguments and puts the result of
+rounding the second down into the first.
+The first is a writable register.
+The second is a readable register or a constant.
+
+```gasm
+; R1 = 2.6
+FLOOR R0 R1
+; R0 = 2
+```
+
+##### SQRT
+
+The `SQRT` operator takes two arguments and puts the square root of
+the second into the first.
+The first is a writable register.
+The second is a readable register or a constant.
+
+```gasm
+; R1 = 25
+SQRT R0 R1
+; R0 = 5
+```
+
+##### SIN
+The `SIN` operator takes two arguments and puts the sine of the 
+angle from the second into the first.
+The first is a writable register.
+The second is a readable register or a constant.
+
+```gasm
+; R1 = 90
+SIN R0 R1
+; R0 = 1
+```
+
+##### COS
+The `COS` operator takes two arguments and puts the cosine of the 
+angle from the second into the first.
+The first is a writable register.
+The second is a readable register or a constant.
+
+```gasm
+; R1 = 90
+COS R0 R1
+; R0 = 0
+```
+
+##### ATAN2
+The `ATAN2` operator takes three arguments and puts the
+angle from (0, 0) to (B, A) into the first.
+The first is a writable register.
+The second and third are readable registers or constants.
+
+```gasm
+ATAN2 R0 0 1
+; R0 = 90
+```
+
+### Comparison Operators
+
+Comparison operators take three arguments and set the first to the result
+of the second and the third. The first is a writable register,
+and the second and third are readable registers.
+Comparison operators will always set the destination register to either
+0 or 1 where 1 means the expression is true, and 0 means it is false.
+This means they work directly with `IF` which checks if a register is not 0.
+
+- `EQUAL` Checks if A equals B
+- `LESS` Checks if A is less than B
+- `GREATER` Checks if A is greater than B
+- `AND` True only if both are true
+- `OR` True if either is true
+- `NOT` Flips true/false
+
+```gasm
+EQUAL R0 1 2   ; R0 = 1 == 2 -> 0
+LESS R0 1 2    ; R0 = 1 <  2 -> 1
+GREATER R0 1 2 ; R0 = 1 >  2 -> 0
+AND R0 1 0     ; R0 = 1 != 0 and 0 != 0 -> 0
+OR R0 1 2      ; R0 = 1 != 0 or  0 != 0 -> 1
+NOT R0 1       ; R0 = !1 -> 0
+```
+
+### Control Flow Operators
+
+Control flow allow for jumping around the code to create
+loops, conditional code, or functions.
+
+For example a loop that makes an object unable to pass below 0 height.
+
+```gasm
+LABEL loop ; infinite loop
+
+	GREATER R0 Obj.Pos.Y 0 ; if Y > 0
+	IF R0 dont_limit       ; dont limit
+
+		; set Y to 0       ; else ( <= 0 )
+		SET Obj.Pos.Y 0
+
+	LABEL dont_limit
+
+GOTO loop
+```
+
+Personally I prefer this kind of pattern of having reversed conditions,
+(if not less than 0), and jumping over logic, but some prefer to have the
+conditional code separated more like a function.
+
+This code is equivelant to the previous.
+
+```gasm
+LABEL loop ; infinite loop
+
+	LESS R0 Obj.Pos.Y 0 ; if Y < 0
+	IF R0 limit         ; limit
+	LABEL after_limit
+
+GOTO loop
+
+; limit function
+LABEL limit
+	; set Y to 0
+	SET Obj.Pos.Y 0
+	GOTO after_limit
+
+```
+
+##### LABEL
+Labels a line in the code with a name.
+
+```gasm
+LABEL loop
+```
+
+##### GOTO
+Jumps to a label
+
+```gasm
+GOTO loop
+```
+
+##### IF
+Jumps only if REG is not zero.
+
+```gasm
+SET R0 1
+IF R0 func ; jump to 'func' if R0 is 1
+```
+
+##### END
+Halts the code.
+
+```gasm
+END
+```
+
+### Misc Operators
+
+##### RAND
+`RAND` sets a register to a random number from 0 to N
+```gasm
+RAND R0 10
+; R0 could be anything from 0 to 10
+```
+
+##### SLEEP
+`SLEEP` pauses execution for a given amount of time in ms.
+> SLEEP 0 will delay execution until the next frame.
+```gasm
+SLEEP 1000 ; sleep for 1 second
+```
+
+### Special Registers
+
+Special registers are managed by the runtime and expose
+certain information about the current state of the program.
+
+##### ProgramCounter
+
+ProgramCounter is the index of the current instruction being read. The line number.
+You write to it to jump to a specific line number, which coupled with reading and saving it,
+can allow implementing callable functions. 
+
+> As of writing this, ProgramCounter is not accessable.
+
+##### DeltaTime
+
+DeltaTime stores the time since the last frame. It should be used to make moving objects
+smooth and consistent by multiplying movment by the DeltaTime to ensure the framerate doesnt
+effect the speed.
+
+##### Others
+
+- `Halt` whether the program is halted
+- `HaltFrame` whether execution is halted for this frame (`SLEEP 0`)
+- `SleepTimer` remaining time until sleep completes
+
+### Common Patterns
+
+#### Infinite loop with sleep 0
+
+Commonly you will want to have something run every frame.
+The way to do that is to create a `LABEL` and a `GOTO` that wrap around code to run infinitely.
+
+It is important to also include a `SLEEP 0` at the end of the loop to ensure the loop only runs once per frame.
+Without `SLEEP 0`, the program will run up to 500 instructions and often that is not what you want.
+
+```gasm
+LABEL loop
+	; code here
+	SLEEP 0
+GOTO loop
+```
+#### DeltaTime
+
+As explained above, DeltaTime stores the time since the last frame.
+
+Generally when moving something, you want it to be at  constant rate.
+
+If you create a simple movement loop:
+
+```gasm
+LABEL loop
+	ADD Obj.Pos.X Obj.Pos.X 0.1
+	SLEEP 0
+GOTO loop
+```
+
+The object will move 0.1m per frame.
+
+If you have a stable framerate that will be 75 fps * 0.1m = 7.5m/s.
+But if you are lagging, then the object will move slower because there are less frames.
+
+The way to counteract this to make the movement appear smooth, and be consistent locally and across multiplayer is to multiply the movemenbt by DeltaTime.
+
+```gasm
+LABEL loop
+	MUL R0 0.1 DeltaTime
+	ADD Obj.Pos.X Obj.Pos.X R0
+	SLEEP 0
+GOTO loop
+```
+
+### Macros
+
+The JSON Editor has a simple but very powerful extra tool on topp of GASM.
+That is preprocessor macros that allow for generating much more complex programs.
+
+| Macro | Arg 1 | Arg 2 | Arg 3 | Arg 4 | Description |
+|------|-----|-------|------|------|-------------|
+| #FOR | var | start | stop | step | for (i = start; i \<= stop; i += step) |
+| #IF  | A   | op    | B    |      | if (A op B) |
+| #END |     |       |      |      | end scope   |
+
+##### Example
+
+```gasm
+SET R7 20 ; to get 0 to 20
+SET R6 10 ; then - 10 to get -10 to 10
+
+#FOR n 1 3
+	; 0  - 20
+	RAND R0 R7
+	RAND R1 R7
+	RAND R2 R7
+
+	#IF n == 3
+		SET R0 10 ; 10 - 10 means always 0
+	#END
+
+	; -10 - 10
+	SUB Obj#n.Pos.X R0 R6
+	SUB Obj#n.Pos.Y R1 R6
+	SUB Obj#n.Pos.Z R2 R6
+#END
+```
+This code uses `#FOR` to duplicate code that sets the `X`, `Y` , and `Z` of an object to a random value `-10` through `10`.
+The for loop creates a variable `n` at `1` and loops up to `3`. Step is omitted so it is 1.
+For each loop it sets `Obj#n.Pos.X` where `#n` will be replaced with the current value of `n`. e.g., `Obj1.Pos.X`.
+
+There is also an `#IF` that runs when `n == 3`. This means each loop will check that condition and if it is true,
+will add the `SET R0 10` line which forces the ojects `X` position to be `0`.
+
+`IF` and `FOR` variable arguments must be alphanumeric.
+`IF` and `FOR` value arguments must be either a number, an existing variable, or a single operator expression such as `i*j`.
+`IF` operators can be `==`, `<`, `<=`, `>`, `>=`, or `!=`.
+
+The resulting GASM code will set 3 objects to random -10 - 10 positions but object 3's X will always be 0:
+
+```gasm
+SET R7 20
+SET R6 10
+RAND R0 R7
+RAND R1 R7
+RAND R2 R7
+SUB Obj1.Pos.X R0 R6
+SUB Obj1.Pos.Y R1 R6
+SUB Obj1.Pos.Z R2 R6
+RAND R0 R7
+RAND R1 R7
+RAND R2 R7
+SUB Obj2.Pos.X R0 R6
+SUB Obj2.Pos.Y R1 R6
+SUB Obj2.Pos.Z R2 R6
+RAND R0 R7
+RAND R1 R7
+RAND R2 R7
+SET R0 10
+SUB Obj3.Pos.X R0 R6
+SUB Obj3.Pos.Y R1 R6
+SUB Obj3.Pos.Z R2 R6
+```
+
+### You are now enlightened
+
+Thanks for reading!
+If you found this guide useful, share it around!
+If you have some feedback, let me know!
+I appreciate it :)
+
+Also if you are here at the time of publishing this,
+Merry christler or whatever.
