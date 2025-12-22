@@ -8,10 +8,12 @@ export async function GET(context) {
 		title: SITE_TITLE,
 		description: SITE_DESCRIPTION,
 		site: context.site,
-		items: posts.map((post) => ({
-			...post.data,
-			link: `/${post.id}/`,
-			content: post.body.substring(0, 100) + "...",
-		})),
+		items: posts
+			.filter((post) => !post.data.tags.includes("hidden"))
+			.map((post) => ({
+				...post.data,
+				link: `/${post.id}/`,
+				content: post.body.substring(0, 100) + "...",
+			})),
 	});
 }

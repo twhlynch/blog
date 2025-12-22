@@ -1,8 +1,10 @@
 ---
 const { tags, noLink } = Astro.props;
-const sortedTags = tags.toSorted((a: string, b: string) => {
-	return b === "meta" ? 1 : a === "meta" ? -1 : a.localeCompare(b);
-});
+const sortedTags = tags
+	.filter((tag: string) => tag !== "hidden")
+	.toSorted((a: string, b: string) => {
+		return b === "meta" ? 1 : a === "meta" ? -1 : a.localeCompare(b);
+	});
 ---
 
 {
