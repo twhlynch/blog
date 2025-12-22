@@ -31,6 +31,16 @@ const { title, description, image = "/thumb.png" } = Astro.props;
 	href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
 />
 
+<!-- smooth scroll in prod but not dev -->
+{!import.meta.env.DEV && (
+	<style is:global>
+		html,
+		body {
+			scroll-behavior: smooth;
+		}
+	</style>
+)}
+
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
 

@@ -19,7 +19,7 @@
 body,
 html {
 	min-height: 100svh;
-	scroll-behavior: smooth;
+	/* scroll-behavior: smooth; */
 }
 * {
 	box-sizing: border-box;
