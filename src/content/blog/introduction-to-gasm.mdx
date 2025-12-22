@@ -85,7 +85,7 @@ the next frame, meaning the loop will only run once per frame.
 
 Line 8 uses `GOTO` to jump back to `loop`. This creates an infinite loop.
 
-It's important to remember that this program is equivelant to the following, but
+It's important to remember that this program is equivalent to the following, but
 by using comments and indenting, it becomes much more readable.
 
 ```gasm
@@ -184,7 +184,7 @@ axis can affect how subsequent rotations behave.
 | GOTO    | LABEL |       |   | jump to a label     |
 | IF      | REG   | LABEL |   | jump to label if REG != 0 |
 | END     |       |       |   | halt the program    |
-| RAND    | DST   | N     |   | DST = random 0 to N-1 |
+| RAND    | DST   | N     |   | DST = random 0 to N |
 | SLEEP   | MS    |       |   | sleep for MS        |
 
 ### Data Operators
@@ -348,7 +348,7 @@ Personally, I prefer this kind of pattern of having reversed conditions,
 (if not less than 0), and jumping over logic, but some prefer to have the
 conditional code separated more like a function.
 
-This code is equivelant to the previous.
+This code is equivalent to the previous.
 
 ```gasm
 LABEL loop ; infinite loop
@@ -420,9 +420,9 @@ certain information about the current state of the program.
 
 ProgramCounter is the index of the current instruction being read. The line number.
 You write to it to jump to a specific line number, which, coupled with reading and saving it,
-can allow implementing callable functions. 
+can allow implementing callable functions.
 
-> As of writing this, ProgramCounter is not accessable.
+> As of writing this, ProgramCounter is not accessible.
 
 ##### DeltaTime
 
@@ -588,7 +588,7 @@ be replaced with the current value of `n`. e.g., `Obj1.Pos.X`.
 There is also an `#IF` that runs when `n == 3`. This
 means each loop will check that condition, and if it
 is true, will add the `SET R0 10` line, which forces
-the oject's `X` position to be `0`.
+the object's `X` position to be `0`.
 
 The resulting GASM code will set 3 objects to random
 -10 to 10 positions, but object 3's X will always be 0:
