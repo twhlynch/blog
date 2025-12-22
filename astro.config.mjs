@@ -3,6 +3,7 @@ import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import Theme from "./theme.json";
+import { gasm } from "./src/gasm.ts";
 
 // https://astro.build/config
 export default defineConfig({
@@ -15,6 +16,7 @@ export default defineConfig({
 				dark: Theme,
 			},
 			theme: Theme,
+			langs: [gasm],
 		},
 	},
 });

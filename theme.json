@@ -200,6 +200,63 @@
 			"settings": {
 				"foreground": "#cdcdcd"
 			}
+		},
+
+		{
+			"scope": ["comment.line.semicolon.gasm"],
+			"settings": {
+				"foreground": "#606079",
+				"fontStyle": "italic"
+			}
+		},
+		{
+			"scope": ["function.other.macro.gasm"],
+			"settings": {
+				"foreground": "#c48282"
+			}
+		},
+		{
+			"scope": ["function.other.macro.gasm"],
+			"settings": {
+				"foreground": "#c48282"
+			}
+		},
+		{
+			"scope": ["keyword.control.instruction.gasm"],
+			"settings": {
+				"foreground": "#6e94b2"
+			}
+		},
+		{
+			"scope": ["variable.other.property.special.gasm"],
+			"settings": {
+				"foreground": "#c3c3d5"
+			}
+		},
+		{
+			"scope": ["variable.other.register.gasm"],
+			"settings": {
+				"foreground": "#cdcdcd"
+			}
+		},
+		{
+			"scope": ["variable.other.connection.gasm"],
+			"settings": {
+				"foreground": "#9bb4bc"
+			}
+		},
+		{
+			"scope": ["constant.numeric.gasm"],
+			"settings": {
+				"foreground": "#e0a363"
+			}
+		},
+		{
+			"scope": ["entity.name.label.gasm"],
+			"settings": {
+				"foreground": "#e8b589",
+				"fontStyle": "italic"
+			}
 		}
 	]
 }
