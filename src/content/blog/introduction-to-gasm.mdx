@@ -496,6 +496,66 @@ That is, preprocessor macros that allow for generating much more complex program
 | #IF  | A   | op    | B    |      | if (A op B) |
 | #END |     |       |      |      | end scope   |
 
+#### FOR Macro
+
+`#FOR` takes a variable name, and a `start`, `stop`, and `step`.
+It loops from `start` to `stop` inclusively, incrementing by `step` each loop.
+`step` can be omitted and defaults to 1.
+
+#### IF Macro
+
+`#IF` takes two values with an operator in the middle.
+Valid operators are:
+
+- `==` A equals B
+- `!=` A does not equal B
+- `>` A is greater than B
+- `>=` A is greater than or equal to B
+- `<` A is less than B
+- `<=` A is less than or equal to B
+
+```gasm
+; is a 10
+#IF a == 10
+#END
+
+; is x less than y
+#IF x < y
+#END
+```
+
+#### Macro variables
+
+`#FOR` macros will create variables with the first argument.
+
+To use these variables you can write it as `#name` anywhere inside
+the loops scope and it will be substituted.
+
+The `#` is not needed when using it in subsequent macros. Only when
+in GASM code.
+
+```gasm
+; loop 0 to 9
+#FOR n 0 9
+	; sets all objects named Obj0 to Obj9 X positions to 0 to 9
+	SET Obj#n.Pos.X #n
+#END
+```
+
+#### Macro Arguments
+
+Any value arguments can be either a number (`1`, `1.1`), a
+variable (`a`, `x`, `i`), or a simple expression (`a+b`, `1*2`, `a/2`).
+Valid 'simple expressions' are 2 values with one of `+`, `-`, `*`, `/`,
+or `%`, and cannot include a space.
+
+```gasm
+; note: real code would need #END
+#FOR a 0 10 1
+#FOR a b c-1 d+1
+#IF 1*10 == a*b
+```
+
 ##### Example
 
 ```gasm
@@ -518,39 +578,40 @@ SET R6 10 ; then - 10 to get -10 to 10
 	SUB Obj#n.Pos.Z R2 R6
 #END
 ```
-This code uses `#FOR` to duplicate code that sets the `X`, `Y`, and `Z`
-of an object to a random value `-10` through `10`.
-The for loop creates a variable `n` at `1` and loops up to `3`. Step is omitted, so it is 1.
-For each loop it sets `Obj#n.Pos.X` where `#n` will be replaced with the current value of `n`. e.g., `Obj1.Pos.X`.
+This code uses `#FOR` to duplicate code that sets the
+`X`, `Y`, and `Z` of an object to a random value `-10`
+through `10`. The for loop creates a variable `n` at
+`1` and loops up to `3`. Step is omitted, so it is 1.
+For each loop it sets `Obj#n.Pos.X` where `#n` will
+be replaced with the current value of `n`. e.g., `Obj1.Pos.X`.
 
-There is also an `#IF` that runs when `n == 3`. This means each loop will check that condition, and if it is true,
-will add the `SET R0 10` line, which forces the oject's `X` position to be `0`.
+There is also an `#IF` that runs when `n == 3`. This
+means each loop will check that condition, and if it
+is true, will add the `SET R0 10` line, which forces
+the oject's `X` position to be `0`.
 
-`IF` and `FOR` variable arguments must be alphanumeric.
-`IF` and `FOR` value arguments must be either a number, an existing variable, or a single operator expression such as `i*j`.
-`IF` operators can be `==`, `<`, `<=`, `>`, `>=`, or `!=`.
-
-The resulting GASM code will set 3 objects to random -10 - 10 positions, but object 3's X will always be 0:
+The resulting GASM code will set 3 objects to random
+-10 to 10 positions, but object 3's X will always be 0:
 
 ```gasm
-SET R7 20
+SET R7 20            ; the constants from the top
 SET R6 10
-RAND R0 R7
+RAND R0 R7           ; loop where n is 1
 RAND R1 R7
 RAND R2 R7
 SUB Obj1.Pos.X R0 R6
 SUB Obj1.Pos.Y R1 R6
 SUB Obj1.Pos.Z R2 R6
-RAND R0 R7
+RAND R0 R7           ; loop where n is 2
 RAND R1 R7
 RAND R2 R7
 SUB Obj2.Pos.X R0 R6
 SUB Obj2.Pos.Y R1 R6
 SUB Obj2.Pos.Z R2 R6
-RAND R0 R7
+RAND R0 R7           ; loop where n is 3
 RAND R1 R7
 RAND R2 R7
-SET R0 10
+SET R0 10            ; n is 3 so this part is here
 SUB Obj3.Pos.X R0 R6
 SUB Obj3.Pos.Y R1 R6
 SUB Obj3.Pos.Z R2 R6
