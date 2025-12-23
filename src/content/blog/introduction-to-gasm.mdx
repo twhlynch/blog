@@ -12,7 +12,7 @@ to how to use it from a more technical point of view: writing code to copy into
 the game, and using the JSON Editor to write complex programs.
 
 > Assembly is a low level programming language just above machine code.
-Instead of complex logic, each line is a very small, specific instruction.
+> Instead of complex logic, each line is a very small, specific instruction.
 
 ### Structure of a Program
 
@@ -78,7 +78,7 @@ when pasting into GRAB, and is handy to explain what code is doing.
 
 Line 3 sets the `R0` register to the constant value `10`.
 
-Line 5 creates a `LABEL` called `loop`, which can be jumped to later on 
+Line 5 creates a `LABEL` called `loop`, which can be jumped to later on
 to create an infinite loop.
 
 Line 6 adds `R0` (which is 10) to `Obj.Pos.Y` and puts the result into
@@ -122,7 +122,7 @@ SET R1 6     ; R1 = 6
 
 ; divide R0 by R1
 DIV R0 R0 R1 ; R0 = R0 / R1 -> 2
-````
+```
 
 Commonly, programs will:
 
@@ -143,6 +143,7 @@ When you add a connection, you can connect the position, rotation,
 or active state, and can name the connection.
 
 This creates a register such as
+
 ```gasm
 Obj.Pos.X ; object position
 Obj.Rot.Y ; object rotation
@@ -156,40 +157,40 @@ Connections can be used anywhere a register can be, except for `Act`
 connections which cannot be modified in code.
 
 > NOTE:
-Rotations are calculated in Y -> X -> Z order. This means when the game computes
-how an object should be rotated based on the rotation values, the object is
-first rotated around the Y axis, then the result of that rotation is rotated
-around the X axis, and finally around the Z axis, so changing one rotation
-axis can affect how subsequent rotations behave.
+> Rotations are calculated in Y -> X -> Z order. This means when the game computes
+> how an object should be rotated based on the rotation values, the object is
+> first rotated around the Y axis, then the result of that rotation is rotated
+> around the X axis, and finally around the Z axis, so changing one rotation
+> axis can affect how subsequent rotations behave.
 
 ### Operators
 
-| Instruction | Op 1 | Op 2 | Op 3 | Description |
-|---------|-------|-------|---|---------------------|
-| SET     | DST   | SRC   |   | DST = SRC           |
-| SWAP    | A     | B     |   | swap A and B        |
-| ADD     | DST   | A     | B | DST = A + B         |
-| SUB     | DST   | A     | B | DST = A - B         |
-| MUL     | DST   | A     | B | DST = A * B         |
-| DIV     | DST   | A     | B | DST = A / B         |
-| MOD     | DST   | A     | B | DST = A % B         |
-| FLOOR   | DST   | A     |   | DST = ⌊A⌋           |
-| SQRT    | DST   | A     |   | DST = √A            |
-| EQUAL   | DST   | A     | B | DST = A == B        |
-| LESS    | DST   | A     | B | DST = A < B         |
-| GREATER | DST   | A     | B | DST = A > B         |
-| AND     | DST   | A     | B | DST = A && B        |
-| OR      | DST   | A     | B | DST = A \|\| B      |
-| NOT     | DST   | A     |   | DST = !A            |
-| SIN     | DST   | A     |   | DST = sin(A)        |
-| COS     | DST   | A     |   | DST = cos(A)        |
-| ATAN2   | DST   | A     | B | DST = angle to (B,A) |
-| LABEL   | LABEL |       |   | define a label      |
-| GOTO    | LABEL |       |   | jump to a label     |
-| IF      | REG   | LABEL |   | jump to label if REG != 0 |
-| END     |       |       |   | halt the program    |
-| RAND    | DST   | N     |   | DST = random 0 to N |
-| SLEEP   | MS    |       |   | sleep for MS        |
+| Instruction | Op 1  | Op 2  | Op 3 | Description               |
+| ----------- | ----- | ----- | ---- | ------------------------- |
+| SET         | DST   | SRC   |      | DST = SRC                 |
+| SWAP        | A     | B     |      | swap A and B              |
+| ADD         | DST   | A     | B    | DST = A + B               |
+| SUB         | DST   | A     | B    | DST = A - B               |
+| MUL         | DST   | A     | B    | DST = A \* B              |
+| DIV         | DST   | A     | B    | DST = A / B               |
+| MOD         | DST   | A     | B    | DST = A % B               |
+| FLOOR       | DST   | A     |      | DST = ⌊A⌋                 |
+| SQRT        | DST   | A     |      | DST = √A                  |
+| EQUAL       | DST   | A     | B    | DST = A == B              |
+| LESS        | DST   | A     | B    | DST = A < B               |
+| GREATER     | DST   | A     | B    | DST = A > B               |
+| AND         | DST   | A     | B    | DST = A && B              |
+| OR          | DST   | A     | B    | DST = A \|\| B            |
+| NOT         | DST   | A     |      | DST = !A                  |
+| SIN         | DST   | A     |      | DST = sin(A)              |
+| COS         | DST   | A     |      | DST = cos(A)              |
+| ATAN2       | DST   | A     | B    | DST = angle to (B,A)      |
+| LABEL       | LABEL |       |      | define a label            |
+| GOTO        | LABEL |       |      | jump to a label           |
+| IF          | REG   | LABEL |      | jump to label if REG != 0 |
+| END         |       |       |      | halt the program          |
+| RAND        | DST   | N     |      | DST = random 0 to N       |
+| SLEEP       | MS    |       |      | sleep for MS              |
 
 ### Data Operators
 
@@ -268,7 +269,8 @@ SQRT R0 R1
 ```
 
 ##### SIN
-The `SIN` operator takes two arguments and puts the sine of the 
+
+The `SIN` operator takes two arguments and puts the sine of the
 angle from the second into the first.
 The first is a writable register.
 The second is a readable register or a constant.
@@ -280,7 +282,8 @@ SIN R0 R1
 ```
 
 ##### COS
-The `COS` operator takes two arguments and puts the cosine of the 
+
+The `COS` operator takes two arguments and puts the cosine of the
 angle from the second into the first.
 The first is a writable register.
 The second is a readable register or a constant.
@@ -292,6 +295,7 @@ COS R0 R1
 ```
 
 ##### ATAN2
+
 The `ATAN2` operator takes three arguments and puts the
 angle from (0, 0) to (B, A) into the first.
 The first is a writable register.
@@ -371,6 +375,7 @@ LABEL limit
 ```
 
 ##### LABEL
+
 Labels a line in the code with a name.
 
 ```gasm
@@ -378,6 +383,7 @@ LABEL loop
 ```
 
 ##### GOTO
+
 `GOTO` jumps to a label.
 
 ```gasm
@@ -385,6 +391,7 @@ GOTO loop
 ```
 
 ##### IF
+
 `IF` will jump to the label only if REG is not zero.
 
 ```gasm
@@ -393,6 +400,7 @@ IF R0 func ; jump to 'func' if R0 is 1
 ```
 
 ##### END
+
 Halts the code.
 
 ```gasm
@@ -402,15 +410,20 @@ END
 ### Misc Operators
 
 ##### RAND
+
 `RAND` sets a register to a random number from 0 to N
+
 ```gasm
 RAND R0 10
 ; R0 could be anything from 0 to 10
 ```
 
 ##### SLEEP
+
 `SLEEP` pauses execution for a given amount of time in milliseconds.
+
 > SLEEP 0 will delay execution until the next frame.
+
 ```gasm
 SLEEP 1000 ; sleep for 1 second
 ```
@@ -456,6 +469,7 @@ LABEL loop
 	SLEEP 0
 GOTO loop
 ```
+
 #### DeltaTime
 
 As explained above, `DeltaTime` stores the time since the last frame.
@@ -494,11 +508,11 @@ GOTO loop
 The JSON Editor has a simple but very powerful extra tool on top of GRAB Assembly.
 That is, preprocessor macros that allow for generating much more complex programs.
 
-| Macro | Arg 1 | Arg 2 | Arg 3 | Arg 4 | Description |
-|------|-----|-------|------|------|-------------|
-| #FOR | var | start | stop | step | for (i = start; i \<= stop; i += step) |
-| #IF  | A   | op    | B    |      | if (A op B) |
-| #END |     |       |      |      | end scope   |
+| Macro | Arg 1 | Arg 2 | Arg 3 | Arg 4 | Description                            |
+| ----- | ----- | ----- | ----- | ----- | -------------------------------------- |
+| #FOR  | var   | start | stop  | step  | for (i = start; i \<= stop; i += step) |
+| #IF   | A     | op    | B     |       | if (A op B)                            |
+| #END  |       |       |       |       | end scope                              |
 
 #### FOR Macro
 
@@ -582,6 +596,7 @@ SET R6 10 ; then - 10 to get -10 to 10
 	SUB Obj#n.Pos.Z R2 R6
 #END
 ```
+
 This code uses `#FOR` to duplicate code that sets the
 `X`, `Y`, and `Z` of an object to a random value `-10`
 through `10`. The for loop creates a variable `n` at
