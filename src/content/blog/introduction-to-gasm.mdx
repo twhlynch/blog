@@ -41,6 +41,7 @@ The **operands** are the values the operator works on. These can be:
 - Working registers (`R0`-`R7`)
 - Object connections (`Obj.Pos.X`, `Trg.Act`, etc.)
 - Constant values (`10`, `0.5`, `-3`)
+- Labels (`loop`, `any string`)
 
 The number of operands depends on the operator. Some instructions take no operands,
 while others take one, two, or three. It's common that the first operand is the destination.
@@ -377,14 +378,14 @@ LABEL loop
 ```
 
 ##### GOTO
-Jumps to a label
+`GOTO` jumps to a label.
 
 ```gasm
 GOTO loop
 ```
 
 ##### IF
-Jumps only if REG is not zero.
+`IF` will jump to the label only if REG is not zero.
 
 ```gasm
 SET R0 1
@@ -421,16 +422,16 @@ certain information about the current state of the program.
 
 ##### ProgramCounter
 
-ProgramCounter is the index of the current instruction being read. The line number.
+`ProgramCounter` is the index of the current instruction being read. The line number.
 You write to it to jump to a specific line number, which, coupled with reading and saving it,
 can allow implementing callable functions.
 
-> As of writing this, ProgramCounter is not accessible.
+> As of writing this, ProgramCounter is not yet accessible.
 
 ##### DeltaTime
 
 DeltaTime stores the time since the last frame. It should be used to make moving objects
-smooth and consistent by multiplying movement by the DeltaTime to ensure the framerate doesnt
+smooth and consistent by multiplying movement by the `DeltaTime` to ensure the framerate doesnt
 affect the speed.
 
 ##### Others
@@ -457,7 +458,7 @@ GOTO loop
 ```
 #### DeltaTime
 
-As explained above, DeltaTime stores the time since the last frame.
+As explained above, `DeltaTime` stores the time since the last frame.
 
 Generally, when moving something, you want it to be at a constant rate.
 
@@ -472,7 +473,7 @@ GOTO loop
 
 The object will move 0.1m per frame.
 
-If you have a stable framerate that will be 75 fps * 0.1m = 7.5m/s.
+If you have a stable framerate that will be `75 fps * 0.1m = 7.5m/s`.
 But if you are lagging, then the object will move slower because there
 are less frames.
 
