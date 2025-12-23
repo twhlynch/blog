@@ -1,5 +1,5 @@
 ---
-title: "Intro to GASM"
+title: "Intro to GRAB Assembly"
 description: "An introduction to writing GRAB Assembly"
 pubDate: "Dec 22 2025"
 heroImage: "/hero/index-rabbit_yoyodud3.webp"
@@ -11,9 +11,11 @@ coding interface for writing assembly. This post will be an introduction
 to how to use it from a more technical point of view: writing code to copy into
 the game, and using the JSON Editor to write complex programs.
 
-### Structure of a GASM Program
+> What is assembly irl?
 
-In GASM, like most assembly style languages, a program is a list of instructions.
+### Structure of a Program
+
+In GRAB Assembly, like most assembly style languages, a program is a list of instructions.
 Each line represents one instruction, and instructions are executed from top to bottom
 unless control flow instructions (`GOTO`, `IF`, `END`) jump the `ProgramCounter`.
 
@@ -53,10 +55,10 @@ Comments are highly recommended to explain longer programs.
 
 ### A simple program
 
-Before we dive into writing programs with GASM, let's break down a simple
+Before we dive into writing programs with GRAB Assembly, let's break down a simple
 program.
 
-Below is a program written in GASM.
+Below is a program written in GRAB Assembly.
 
 ```gasm
 ; infinitely move 'Obj' upwards
@@ -98,8 +100,8 @@ GOTO loop
 
 ### Working Registers
 
-The primary way to store and manipulate data in GASM is through
-**working registers**. GASM provides eight working registers,
+The primary way to store and manipulate data in GRAB Assembly is through
+**working registers**. GRAB Assembly provides eight working registers,
 named `R0` through `R7`.
 These registers can be read from and written to.
 
@@ -152,10 +154,10 @@ Connections can be used anywhere a register can be, except for `Act`
 connections which cannot be modified in code.
 
 > NOTE:
-Rotations are calculated in X -> Y -> Z order. This means when the game computes
+Rotations are calculated in Y -> X -> Z order. This means when the game computes
 how an object should be rotated based on the rotation values, the object is
-first rotated around the X axis, then the result of that rotation is rotated
-around the Y axis, and finally around the Z axis, so changing one rotation
+first rotated around the Y axis, then the result of that rotation is rotated
+around the X axis, and finally around the Z axis, so changing one rotation
 axis can affect how subsequent rotations behave.
 
 ### Operators
@@ -487,7 +489,7 @@ GOTO loop
 
 ### Macros
 
-The JSON Editor has a simple but very powerful extra tool on top of GASM.
+The JSON Editor has a simple but very powerful extra tool on top of GRAB Assembly.
 That is, preprocessor macros that allow for generating much more complex programs.
 
 | Macro | Arg 1 | Arg 2 | Arg 3 | Arg 4 | Description |
@@ -532,7 +534,7 @@ To use these variables you can write it as `#name` anywhere inside
 the loops scope and it will be substituted.
 
 The `#` is not needed when using it in subsequent macros. Only when
-in GASM code.
+in GRAB Assembly code.
 
 ```gasm
 ; loop 0 to 9
@@ -590,7 +592,7 @@ means each loop will check that condition, and if it
 is true, will add the `SET R0 10` line, which forces
 the object's `X` position to be `0`.
 
-The resulting GASM code will set 3 objects to random
+The resulting GRAB Assembly code will set 3 objects to random
 -10 to 10 positions, but object 3's X will always be 0:
 
 ```gasm
