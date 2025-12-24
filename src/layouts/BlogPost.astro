@@ -15,6 +15,7 @@ import CodeHighlights from "@components/CodeHighlights.astro";
 import Spoiler from "@components/Spoiler.astro";
 import IndexMentioned from "@components/IndexMentioned.astro";
 import ViewSource from "@components/ViewSource.astro";
+import HeaderLinks from "@components/HeaderLinks.astro";
 
 type Props = CollectionEntry<"blog">["data"];
 
@@ -179,6 +180,7 @@ const { title, description, pubDate, updatedDate, heroImage, tags, canonical } =
 					<CodeHighlights />
 					<IndexMentioned />
 					<ViewSource />
+					<HeaderLinks />
 				</div>
 			</article>
 			<SuggestedPosts props={Astro.props} />
