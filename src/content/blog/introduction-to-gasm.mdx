@@ -2,22 +2,26 @@
 title: "Intro to GRAB Assembly"
 description: "An introduction to writing GRAB Assembly"
 pubDate: "Dec 22 2025"
+updatedDate: "Dec 24 2025"
 heroImage: "/hero/index-rabbit_yoyodud3.webp"
 tags: ["grab", "asm", "hidden"]
 ---
 
-Recently, GRAB has added code blocks, allowing building programs with a block
-coding interface for writing assembly. This post will be an introduction
-to how to use it from a more technical point of view: writing code to copy into
+Recently, GRAB has added code blocks, allowing users to build programs with a block
+coding interface for writing **assembly**. This post introduces GRAB Assembly
+from a more technical point of view: writing code to copy into
 the game, and using the JSON Editor to write complex programs.
+
+I first explain the structure of GRAB assembly, and explain a simple program before
+going into detail on the different parts of the language.
 
 > Assembly is a low level programming language just above machine code.
 > Instead of complex logic, each line is a very small, specific instruction.
 
 ### Structure of a Program
 
-In GRAB Assembly, like most assembly style languages, a program is a list of instructions.
-Each line represents one instruction, and instructions are executed from top to bottom
+In GRAB Assembly, like most assembly languages, a program is a list of instructions.
+Each line represents one instruction. Instructions are executed from top to bottom
 unless control flow instructions (`GOTO`, `IF`, `END`) jump the `ProgramCounter`.
 
 An instruction generally has the following form:
@@ -25,6 +29,8 @@ An instruction generally has the following form:
 ```bash
 OPERATOR OPERAND OPERAND ...
 ```
+
+> NOTE: Operands can be referred to as 'Operands' to an operator, or 'Arguments' to an instruction.
 
 For example:
 
@@ -46,14 +52,15 @@ The **operands** are the values the operator works on. These can be:
 The number of operands depends on the operator. Some instructions take no operands,
 while others take one, two, or three. It's common that the first operand is the destination.
 
-Comments start with a semicolon (`;`). Everything after the semicolon on a line is ignored
-when pasting into GRAB.
+Comments start with a semicolon (`;`). Everything after the semicolon on a line is removed
+when pasting code into GRAB.
 
 ```gasm
 SET R0 10 ; set initial speed
 ```
 
-Comments are highly recommended to explain longer programs.
+Comments are highly recommended to explain longer programs, they make them
+more readable and easier to update at a later date.
 
 ### A simple program
 
@@ -73,12 +80,12 @@ LABEL loop                     ; 5) label to jump back to
 GOTO loop                      ; 8) loop forever
 ```
 
-Line 1, as well as the text after each line, is a comment. It will be removed
-when pasting into GRAB, and is handy to explain what code is doing.
+Line 1, as well as the text after the semicolon (;) on each line, is a comment. It will be removed
+when pasting into GRAB, but is handy to explain what code is doing.
 
 Line 3 sets the `R0` register to the constant value `10`.
 
-Line 5 creates a `LABEL` called `loop`, which can be jumped to later on
+Line 5 creates a `LABEL` called `loop`, which will be jumped to later
 to create an infinite loop.
 
 Line 6 adds `R0` (which is 10) to `Obj.Pos.Y` and puts the result into
@@ -89,8 +96,8 @@ the next frame, meaning the loop will only run once per frame.
 
 Line 8 uses `GOTO` to jump back to `loop`. This creates an infinite loop.
 
-It's important to remember that this program is equivalent to the following, but
-by using comments and indenting, it becomes much more readable.
+By using comments and indenting, this program becomes more easily readable,
+but in GRAB, is equivalent to the following:
 
 ```gasm
 SET R0 10
@@ -102,7 +109,7 @@ GOTO loop
 
 ### Working Registers
 
-The primary way to store and manipulate data in GRAB Assembly is through
+The main way to store and manipulate data in GRAB Assembly is through
 **working registers**. GRAB Assembly provides eight working registers,
 named `R0` through `R7`.
 These registers can be read from and written to.
@@ -138,8 +145,10 @@ but be aware that the object exists physically.
 
 ### Connections
 
-You can add connections to objects that add connected registers.
-When you add a connection, you can connect the position, rotation,
+> Connections can be added in GRAB's selection menu. Select a code block,
+> click `Edit Connections`, and select another object to add a connection to it.
+
+When you add a connection to an object, you can connect the position, rotation,
 or active state, and can name the connection.
 
 This creates a register such as
@@ -147,20 +156,20 @@ This creates a register such as
 ```gasm
 Obj.Pos.X ; object position
 Obj.Rot.Y ; object rotation
-Trg.Act ; trigger is active
+Trg.Act   ; trigger is active
 ```
 
-Position and rotation are readable and writable, and active is read only
-and only for triggers.
+**Position** and **rotation** are readable and writable. **Active** is read-only
+and only available for connections to triggers.
 
-Connections can be used anywhere a register can be, except for `Act`
+Connections can be used anywhere a register can, except for `Act`
 connections which cannot be modified in code.
 
 > NOTE:
-> Rotations are calculated in Y -> X -> Z order. This means when the game computes
+> Rotations are calculated in Y -> X -> Z order. This means: when the game computes
 > how an object should be rotated based on the rotation values, the object is
-> first rotated around the Y axis, then the result of that rotation is rotated
-> around the X axis, and finally around the Z axis, so changing one rotation
+> first rotated around the Y axis; then the result of that rotation is rotated
+> around the X axis; and finally around the Z axis. So changing one rotation
 > axis can affect how subsequent rotations behave.
 
 ### Operators
@@ -194,43 +203,48 @@ connections which cannot be modified in code.
 
 ### Data Operators
 
-These are operators that simply move data in registers.
+These are simple operators that move data in registers.
 
 ##### SET
 
-The `SET` operator takes two arguments and copies the second's value
-into the first.
-The first is a writable register to set,
-and the second is a register or constant value to copy the value from.
+The `SET` operator takes two arguments: a destination register (`DST`), and a source value (`SRC`).
+It copies the source's value into the destination.
+
+- `DST` - A writable register
+- `SRC` - A register or constant value
 
 ```gasm
-; R0 = 0
-SET R0 10
-; R0 = 10
+SET R0 10 ; set R0 to 10
+SET R1 R0 ; set R1 to R0
 ```
 
 ##### SWAP
 
-The `SWAP` operator takes two arguments and swaps their values.
-Both are writable registers.
+The `SWAP` operator takes two register arguments (`A`, and `B`), and swaps their values.
+
+- `A` - A writable register
+- `B` - A writable register
 
 ```gasm
-; R0 = 1 ; R1 = 2
-SWAP R0 R1
-; R0 = 2 ; R1 = 1
+SWAP R0 R1 ; swap the values of R0 and R1
 ```
 
 ### Arithmetic Operators
 
-Arithmetic operators take three arguments and set the first to the result of the second and the third.
-The first is a writable register,
-and the second and third are readable registers.
+Arithmetic operators take three arguments: a destination register (`DST`), and two register or value arguments (`A`, and `B`).
+They set the destination to the result of **A** and **B**.
 
-- `ADD` will add two values
-- `SUB` will subtract two values
-- `MUL` will multiply two values
-- `DIV` will divide two values
-- `MOD` will modulo two values (remainder)
+- `DST` - A writable register
+- `A` - A register or constant value
+- `B` - A register or constant value
+
+The operators work as follows:
+
+- `ADD` will add two values (`A` + `B`)
+- `SUB` will subtract two values (`A` - `B`)
+- `MUL` will multiply two values (`A` \* `B`)
+- `DIV` will divide two values (`A` / `B`)
+- `MOD` will modulo two values (remainder) (`A` % `B`)
 
 ```gasm
 ADD R0 10 3 ; R0 = 10 + 3 -> 13
@@ -238,72 +252,105 @@ SUB R0 10 3 ; R0 = 10 - 3 -> 7
 MUL R0 10 3 ; R0 = 10 * 3 -> 30
 DIV R0 10 3 ; R0 = 10 / 3 -> 3.333...
 MOD R0 10 3 ; R0 = 10 % 3 -> 1
+ADD R0 R0 10 ; R0 = R0 + 10
+ADD R0 R1 R2 ; R0 = R1 + R2
 ```
+
+> NOTE: When using `DIV`, be careful not to divide by zero, which will error the program.
 
 ### Other Math Operators
 
 ##### FLOOR
 
-The `FLOOR` operator takes two arguments and puts the result of
-rounding the second down into the first.
-The first is a writable register.
-The second is a readable register or a constant.
+The `FLOOR` operator takes two arguments: a destination register (`DST`), and a source value (`SRC`).
+It rounds down the source's value into the destination.
+
+- `DST` - A writable register
+- `SRC` - A register or constant value
 
 ```gasm
-; R1 = 2.6
-FLOOR R0 R1
-; R0 = 2
+; R1 is 2.6
+FLOOR R0 R1 ; round R1 down into R0
+; R0 is 2
 ```
 
 ##### SQRT
 
-The `SQRT` operator takes two arguments and puts the square root of
-the second into the first.
-The first is a writable register.
-The second is a readable register or a constant.
+The `SQRT` operator takes two arguments: a destination register (`DST`), and a source value (`SRC`).
+It puts the square root of the source's value into the destination.
+
+- `DST` - A writable register
+- `SRC` - A register or constant value
 
 ```gasm
-; R1 = 25
-SQRT R0 R1
-; R0 = 5
+SQRT R0 25 ; set R0 to the square root of 25
+; R0 is 5
 ```
 
 ##### SIN
 
-The `SIN` operator takes two arguments and puts the sine of the
-angle from the second into the first.
-The first is a writable register.
-The second is a readable register or a constant.
+The `SIN` operator takes two arguments: a destination register (`DST`), and a source angle (`SRC`).
+It puts the sine of the source's value as an angle into the destination.
+
+- `DST` - A writable register
+- `SRC` - A register or constant value
 
 ```gasm
-; R1 = 90
-SIN R0 R1
-; R0 = 1
+SIN R0 90 ; set R0 to the sine of 90
+; R0 is 1
 ```
 
 ##### COS
 
-The `COS` operator takes two arguments and puts the cosine of the
-angle from the second into the first.
-The first is a writable register.
-The second is a readable register or a constant.
+The `COS` operator takes two arguments: a destination register (`DST`), and a source angle (`SRC`).
+It puts the cosine of the source's value as an angle into the destination.
+
+- `DST` - A writable register
+- `SRC` - A register or constant value
 
 ```gasm
-; R1 = 90
-COS R0 R1
-; R0 = 0
+COS R0 90 ; set R0 to the cosine of 90
+; R0 is 0
 ```
+
+##### Trigonometry basics
+
+If you are unfamiliar with sine and cosine, I'll go over
+the fundamentals of what they are in the context of the
+`SIN` and `COS` instructions.
+
+Sine and cosine are ways of turning an angle into numbers
+that describe direction. Imagine standing at the centre
+of a circle and pointing in some direction: `COS` tells you
+how far in the `X` direction that angle points, while `SIN` tells
+you how far in the `Y` direction it points.
+Because the dot always stays on the circle, these values
+smoothly range between -1 and 1 as the angle changes.
+
+Using the diagram below, drag the white dot around the circle.
+The position of the dot directly matches the yellow line, which
+represents the angle `SRC`. The resulting `SIN` is the length
+of the **red** line from the dot down to 0 on the `Y` axis, and `COS` is the length
+of the **blue** line from the dot across to 0 on the `X` axis.
+
+import TrigDiagram from "@components/TrigDiagram.astro";
+
+<TrigDiagram />
 
 ##### ATAN2
 
-The `ATAN2` operator takes three arguments and puts the
-angle from (0, 0) to (B, A) into the first.
-The first is a writable register.
-The second and third are readable registers or constants.
+The `ATAN2` operator takes two arguments: a destination register (`DST`),
+a source y (`A`), and a source x (`B`).
+It sets the destination to the angle from (0, 0) to (B, A).
+You can think of it as reversing `SIN` and `COS` to get the original angle.
+
+- `DST` - A writable register
+- `A` - A register or constant value
+- `B` - A register or constant value
 
 ```gasm
-ATAN2 R0 0 1
-; R0 = 90
+ATAN2 R0 0 1 ; set R0 to atan2 of 0 and 1
+; R0 is 90
 ```
 
 ### Comparison Operators
@@ -422,7 +469,7 @@ RAND R0 10
 
 `SLEEP` pauses execution for a given amount of time in milliseconds.
 
-> SLEEP 0 will delay execution until the next frame.
+> TIP: SLEEP 0 will delay execution until the next frame.
 
 ```gasm
 SLEEP 1000 ; sleep for 1 second
@@ -439,7 +486,7 @@ certain information about the current state of the program.
 You write to it to jump to a specific line number, which, coupled with reading and saving it,
 can allow implementing callable functions.
 
-> As of writing this, ProgramCounter is not yet accessible.
+> NOTE: As of writing this, ProgramCounter is not yet accessible.
 
 ##### DeltaTime
 

@@ -1,0 +1,232 @@
+---
+const id = Math.random().toString(36).slice(2, 11);
+---
+
+<div>
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="-10 20 320 210"
+		fill="var(--fade)"
+		stroke="none"
+		stroke-width="1.415"
+		stroke-miterlimit="8"
+		id={"trig-diagram-" + id}
+	>
+		<g>
+			<g fill="#e0a363">
+				<switch>
+					<text x="210" y="100">
+						<tspan data-id="src-value">SRC = 45</tspan>
+					</text>
+				</switch>
+				<switch fill="#bb7070">
+					<text x="210" y="130">
+						<tspan data-id="dst-sin">SIN = 0.71</tspan>
+					</text>
+				</switch>
+				<switch fill="#6e94b2">
+					<text x="210" y="160">
+						<tspan data-id="dst-cos">COS = 0.71</tspan>
+					</text>
+				</switch>
+			</g>
+
+			<g fill="none">
+				<!-- unit circle -->
+				<g stroke="var(--fade)">
+					<circle cx="95" cy="125" r="91.7" data-id="circle">
+					</circle>
+					<line x1="95" y1="125" x2="134" y2="42" data-id="line">
+					</line>
+					<line
+						x1="4"
+						y1="125"
+						x2="186"
+						y2="125"
+						stroke-dasharray="4"
+					>
+					</line>
+					<line x1="95" y1="34" x2="95" y2="216" stroke-dasharray="4">
+					</line>
+
+					<path stroke="#e0a363" data-id="theta-curve" d=""> </path>
+				</g>
+
+				<!-- lines -->
+				<line
+					data-id="cos-right"
+					stroke="#6e94c2"
+					x1="95"
+					y1="42"
+					x2="134"
+					y2="42"
+				>
+				</line>
+				<line
+					data-id="cos-left"
+					stroke="#6e94c2"
+					x1="95"
+					y1="125"
+					x2="134"
+					y2="125"
+				>
+				</line>
+				<line
+					data-id="sin-left"
+					stroke="#db7070"
+					x1="134"
+					y1="125"
+					x2="134"
+					y2="42"
+				>
+				</line>
+				<line
+					data-id="sin-right"
+					stroke="#db7070"
+					x1="95"
+					y1="125"
+					x2="95"
+					y2="42"
+				>
+				</line>
+			</g>
+
+			<!-- buttons -->
+			<circle cx="134" cy="42" r="8" fill="#fff" data-id="button">
+			</circle>
+		</g>
+	</svg>
+</div>
+<script type="module" define:vars={{ id }} is:inline>
+	const svg = document.getElementById("trig-diagram-" + id);
+
+	const button = svg.querySelector('[data-id="button"]');
+	const sin_left = svg.querySelector('[data-id="sin-left"]');
+	const sin_right = svg.querySelector('[data-id="sin-right"]');
+	const cos_left = svg.querySelector('[data-id="cos-left"]');
+	const cos_right = svg.querySelector('[data-id="cos-right"]');
+	const sin_label = svg.querySelector('[data-id="dst-sin"]');
+	const cos_label = svg.querySelector('[data-id="dst-cos"]');
+	const src_label = svg.querySelector('[data-id="src-value"]');
+	const theta_curve = svg.querySelector('[data-id="theta-curve"]');
+	const angle_line = svg.querySelector('[data-id="line"]');
+	const circle = svg.querySelector('[data-id="circle"]');
+
+	const CENTER = {
+		x: parseFloat(circle.getAttribute("cx")),
+		y: parseFloat(circle.getAttribute("cy")),
+	};
+	const RADIUS = parseFloat(circle.getAttribute("r"));
+
+	const arc = (cx, cy, angle) => {
+		const r = 22;
+		const sx = cx + r;
+		const sy = cy;
+		const ex = cx + Math.cos(angle) * r;
+		const ey = cy + Math.sin(angle) * r;
+
+		const arc = Math.abs(angle) > Math.PI ? 1 : 0;
+		const sweep = angle >= 0 ? 1 : 0;
+
+		return `M ${sx} ${sy} A ${r} ${r} 0 ${arc} ${sweep} ${ex} ${ey}`;
+	};
+
+	const update = (angle) => {
+		const cos = Math.cos(angle);
+		const sin = Math.sin(angle);
+
+		const bx = CENTER.x + cos * RADIUS;
+		const by = CENTER.y - sin * RADIUS;
+
+		button.setAttribute("cx", bx);
+		button.setAttribute("cy", by);
+
+		angle_line.setAttribute("x2", bx);
+		angle_line.setAttribute("y2", by);
+
+		cos_left.setAttribute("x1", CENTER.x);
+		cos_left.setAttribute("y1", CENTER.y);
+		cos_left.setAttribute("x2", CENTER.x + cos * RADIUS);
+		cos_left.setAttribute("y2", CENTER.y);
+
+		cos_right.setAttribute("x1", CENTER.x);
+		cos_right.setAttribute("y1", CENTER.y - sin * RADIUS);
+		cos_right.setAttribute("x2", CENTER.x + cos * RADIUS);
+		cos_right.setAttribute("y2", CENTER.y - sin * RADIUS);
+
+		sin_left.setAttribute("x1", CENTER.x + cos * RADIUS);
+		sin_left.setAttribute("y1", CENTER.y);
+		sin_left.setAttribute("x2", CENTER.x + cos * RADIUS);
+		sin_left.setAttribute("y2", CENTER.y - sin * RADIUS);
+
+		sin_right.setAttribute("x1", CENTER.x);
+		sin_right.setAttribute("y1", CENTER.y);
+		sin_right.setAttribute("x2", CENTER.x);
+		sin_right.setAttribute("y2", CENTER.y - sin * RADIUS);
+
+		sin_label.textContent = `SIN = ${sin.toFixed(2)}`;
+		cos_label.textContent = `COS = ${cos.toFixed(2)}`;
+
+		const degrees = angle * (180 / Math.PI);
+		src_label.textContent = `SRC = ${degrees.toFixed(1)}`;
+
+		theta_curve.setAttribute("d", arc(CENTER.x, CENTER.y, -angle));
+	};
+
+	let dragging = false;
+	const move = (clientX, clientY) => {
+		if (!dragging) return;
+
+		const pt = svg.createSVGPoint();
+		pt.x = clientX;
+		pt.y = clientY;
+		const { x, y } = pt.matrixTransform(svg.getScreenCTM().inverse());
+
+		const dx = x - CENTER.x;
+		const dy = CENTER.y - y; // invert Y (window -> cartesian coords)
+
+		const angle = Math.atan2(dy, dx);
+		update(angle);
+	};
+
+	// events
+	button.addEventListener("mousedown", (e) => {
+		e.preventDefault();
+		dragging = true;
+	});
+	document.addEventListener("mouseup", () => (dragging = false));
+	document.addEventListener("mousemove", (e) => move(e.clientX, e.clientY));
+
+	button.addEventListener("touchstart", (e) => {
+		e.preventDefault();
+		dragging = true;
+	});
+	document.addEventListener("touchend", () => (dragging = false));
+	document.addEventListener("touchmove", (e) =>
+		move(e.touches[0].clientX, e.touches[0].clientY),
+	);
+
+	update(Math.PI / 4); // init 45 deg
+</script>
+
+<style>
+	div {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 5px 10px;
+		border-radius: 15px;
+		gap: 0.4em;
+		user-select: none;
+		font-family: monospace;
+
+		svg {
+			width: 80%;
+			font-size: 14px;
+		}
+
+		[data-id="button"] {
+			cursor: pointer;
+		}
+	}
+</style>
