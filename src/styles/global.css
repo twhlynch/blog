@@ -131,17 +131,23 @@ input {
 }
 table {
 	width: 100%;
-	background-color: #ffffff06;
 	overflow: hidden;
 	border-radius: 10px;
 	border-spacing: 0;
 	border-collapse: separate;
 
+	tbody {
+		background-color: #ffffff06;
+	}
 	td,
 	th {
 		padding-inline: 10px;
 	}
-	tr:nth-child(2n) {
+	th {
+		white-space: nowrap;
+	}
+	tr:nth-child(2n),
+	th {
 		background-color: #ffffff09;
 	}
 }
@@ -218,6 +224,28 @@ ol {
 		td,
 		th {
 			padding-inline: 5px;
+		}
+	}
+}
+@media (max-width: 410px) {
+	table {
+		&::before {
+			content: "Small screen. Scroll ->";
+			position: absolute;
+			top: 0;
+			left: 0.3rem;
+			font-size: 0.6rem;
+			z-index: 2;
+			color: var(--fade);
+			width: fit-content;
+		}
+
+		overflow-x: scroll;
+		display: block;
+		padding-top: 1rem;
+		white-space: nowrap;
+		&::-webkit-scrollbar {
+			display: none;
 		}
 	}
 }
