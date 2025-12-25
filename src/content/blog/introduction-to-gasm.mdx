@@ -2,9 +2,9 @@
 title: "Intro to GRAB Assembly"
 description: "An introduction to writing GRAB Assembly"
 pubDate: "Dec 22 2025"
-updatedDate: "Dec 24 2025"
+updatedDate: "Dec 25 2025"
 heroImage: "/hero/index-rabbit_yoyodud3.webp"
-tags: ["grab", "asm", "hidden"]
+tags: ["grab", "asm"]
 ---
 
 Recently, GRAB has added code blocks, which allow users to build programs with a block
@@ -30,8 +30,6 @@ An instruction generally has the following form:
 ```bash
 OPERATOR OPERAND OPERAND ...
 ```
-
-> NOTE: Operands can be referred to as 'Operands' to an operator, or 'Arguments' to an instruction.
 
 For example:
 
@@ -166,6 +164,11 @@ Trg.Act   ; trigger is active
 **Position** and **rotation** are readable and writable. **Active** is read-only
 and only available for connections to triggers.
 
+Connections behave just like working registers, but
+are **connected** to an object; when you modify the
+connection's register, the object is modified;
+when the object is modified, the register is modified.
+
 Connections can be used anywhere a register can, except for `Act`
 connections which cannot be modified in code.
 
@@ -202,7 +205,7 @@ connections which cannot be modified in code.
 | GOTO        | LABEL |       |      | jump to a label           |
 | IF          | REG   | LABEL |      | jump to label if REG != 0 |
 | END         |       |       |      | halt the program          |
-| RAND        | DST   | N     |      | DST = random 0 to N       |
+| RAND        | DST   | N     |      | DST = random 0 to N - 1   |
 | SLEEP       | MS    |       |      | sleep for MS              |
 
 ### Data Operators
@@ -211,7 +214,7 @@ Data operators are simple operators that move data in registers.
 
 ##### SET
 
-The `SET` operator takes two arguments: a destination register (`DST`), and a source value (`SRC`).
+The `SET` operator takes two operands: a destination register (`DST`), and a source value (`SRC`).
 It copies the source's value into the destination.
 
 - `DST` - A writable register
@@ -224,7 +227,7 @@ SET R1 R0 ; set R1 to R0
 
 ##### SWAP
 
-The `SWAP` operator takes two register arguments (`A`, and `B`), and swaps their values.
+The `SWAP` operator takes two register operands (`A`, and `B`), and swaps their values.
 
 - `A` - A writable register
 - `B` - A writable register
@@ -235,7 +238,7 @@ SWAP R0 R1 ; swap the values of R0 and R1
 
 ### Arithmetic Operators
 
-Arithmetic operators take three arguments: a destination register (`DST`), and two register or value arguments (`A`, and `B`).
+Arithmetic operators take three operands: a destination register (`DST`), and two register or value operands (`A`, and `B`).
 They set the destination to the result of **A** and **B**.
 
 - `DST` - A writable register
@@ -266,7 +269,7 @@ ADD R0 R1 R2 ; R0 = R1 + R2
 
 ##### FLOOR
 
-The `FLOOR` operator takes two arguments: a destination register (`DST`), and a source value (`SRC`).
+The `FLOOR` operator takes two operands: a destination register (`DST`), and a source value (`SRC`).
 It rounds down the source's value into the destination.
 
 - `DST` - A writable register
@@ -280,7 +283,7 @@ FLOOR R0 R1 ; round R1 down into R0
 
 ##### SQRT
 
-The `SQRT` operator takes two arguments: a destination register (`DST`), and a source value (`SRC`).
+The `SQRT` operator takes two operands: a destination register (`DST`), and a source value (`SRC`).
 It puts the square root of the source's value into the destination.
 
 - `DST` - A writable register
@@ -293,8 +296,8 @@ SQRT R0 25 ; set R0 to the square root of 25
 
 ##### SIN
 
-The `SIN` operator takes two arguments: a destination register (`DST`), and a source angle (`SRC`).
-It puts the sine of the source's value as an angle into the destination.
+The `SIN` operator takes two operands: a destination register (`DST`), and a source angle (`SRC`).
+It puts the sine of the source's value as an angle in degrees into the destination.
 
 - `DST` - A writable register
 - `SRC` - A register or constant value
@@ -306,8 +309,8 @@ SIN R0 90 ; set R0 to the sine of 90
 
 ##### COS
 
-The `COS` operator takes two arguments: a destination register (`DST`), and a source angle (`SRC`).
-It puts the cosine of the source's value as an angle into the destination.
+The `COS` operator takes two operands: a destination register (`DST`), and a source angle (`SRC`).
+It puts the cosine of the source's value as an angle in degrees into the destination.
 
 - `DST` - A writable register
 - `SRC` - A register or constant value
@@ -337,16 +340,20 @@ represents the angle `SRC`. The resulting `SIN` is the length
 of the **red** line from the dot down to 0 on the `Y` axis, and `COS` is the length
 of the **blue** line from the dot across to 0 on the `X` axis.
 
+> NOTE: All trigonometric operators in GRAB Assembly use degrees, not radians.
+
 import TrigDiagram from "@components/TrigDiagram.astro";
 
 <TrigDiagram />
 
 ##### ATAN2
 
-The `ATAN2` operator takes two arguments: a destination register (`DST`),
+The `ATAN2` operator takes two operands: a destination register (`DST`),
 a source y (`A`), and a source x (`B`).
 It sets the destination to the angle from (0, 0) to (B, A).
 You can think of it as reversing `SIN` and `COS` to get the original angle.
+
+> NOTE: ATAN2 uses (y, x), not (x, y).
 
 - `DST` - A writable register
 - `A` - A register or constant value
@@ -359,7 +366,7 @@ ATAN2 R0 0 1 ; set R0 to atan2 of 0 and 1
 
 ### Comparison Operators
 
-Comparison operators take three arguments and set the first to the result
+Comparison operators take three operands and set the first to the result
 of the second and the third.
 
 - `DST` - A writable register
@@ -367,7 +374,7 @@ of the second and the third.
 - `B` - A register or constant value
 
 Comparison operators will always set the destination register to either
-0 or 1, where 1 means the expression is true, and 0 means it is false.
+0 or 1, where 1 (and any other non 0 value) means the expression is true, and 0 means it is false.
 This means they work directly with `IF`, which checks if a register is not 0.
 
 - `EQUAL` Checks if A equals B
@@ -378,12 +385,12 @@ This means they work directly with `IF`, which checks if a register is not 0.
 - `NOT` Flips true/false
 
 ```gasm
-EQUAL R0 1 2   ; R0 = 1 == 2 -> 0
-LESS R0 1 2    ; R0 = 1 <  2 -> 1
-GREATER R0 1 2 ; R0 = 1 >  2 -> 0
-AND R0 1 0     ; R0 = 1 != 0 and 0 != 0 -> 0
-OR R0 1 2      ; R0 = 1 != 0 or  0 != 0 -> 1
-NOT R0 1       ; R0 = !1 -> 0
+EQUAL R0 1 2   ; R0 = (1 == 2) -> 0
+LESS R0 1 2    ; R0 = (1 <  2) -> 1
+GREATER R0 1 2 ; R0 = (1 >  2) -> 0
+AND R0 1 0     ; R0 = (1 != 0 and 0 != 0) -> 0
+OR R0 1 2      ; R0 = (1 != 0 or  0 != 0) -> 1
+NOT R0 1       ; R0 = (!1) -> 0
 ```
 
 ### Control Flow Operators
@@ -466,11 +473,11 @@ END
 
 ##### RAND
 
-`RAND` sets a register to a random number from 0 to N
+`RAND` sets a register to a random number from 0 to N-1.
 
 ```gasm
 RAND R0 10
-; R0 could be anything from 0 to 10
+; R0 could be anything from 0 to 9
 ```
 
 ##### SLEEP
@@ -490,11 +497,11 @@ certain information about the current state of the program.
 
 ##### ProgramCounter
 
-`ProgramCounter` is the index of the current instruction being read. The line number.
+`ProgramCounter` is the index of the current instruction being read. The line number - 1.
 You write to it to jump to a specific line number, which, coupled with reading and saving it,
 can allow the implementation of callable functions.
 
-> NOTE: At the time of writing this, ProgramCounter is not yet accessible.
+> NOTE: At the time of writing this, ProgramCounter is not yet accessible, but should be in the near future.
 
 ##### DeltaTime
 
@@ -542,7 +549,7 @@ GOTO loop
 
 The object will move 0.1m per frame.
 
-If you have a stable framerate that will be `75 fps * 0.1m = 7.5m/s`.
+If you have a stable frame rate, that will be `75 fps * 0.1m = 7.5m/s`.
 However, if you are lagging, then the object will move slower because there
 are less frames.
 
@@ -601,7 +608,7 @@ Valid operators are:
 
 `#FOR` macros will create variables with the first argument.
 
-To use these variables you can write it as `#name` anywhere inside
+To use these variables, you can write `#name` anywhere inside
 the loops scope and it will be substituted.
 
 The `#` is not needed when using it in subsequent macros. Only when
@@ -617,7 +624,7 @@ in GRAB Assembly code.
 
 #### Macro Arguments
 
-Any value arguments can be either a number (`1`, `1.1`), a
+Any value operands can be either a number (`1`, `1.1`), a
 variable (`a`, `x`, `i`), or a simple expression (`a+b`, `1*2`, `a/2`).
 Valid 'simple expressions' are 2 values with one of `+`, `-`, `*`, `/`,
 or `%`, and cannot include a space.
@@ -632,7 +639,7 @@ or `%`, and cannot include a space.
 ##### Example
 
 ```gasm
-SET R7 20 ; to get 0 to 20
+SET R7 21 ; to get 0 to 20
 SET R6 10 ; then - 10 to get -10 to 10
 
 #FOR n 1 3
@@ -668,7 +675,7 @@ The resulting GRAB Assembly code will set 3 objects to random
 -10 to 10 positions, but object 3's X will always be 0:
 
 ```gasm
-SET R7 20            ; the constants from the top
+SET R7 21            ; the constants from the top
 SET R6 10
 RAND R0 R7           ; loop where n is 1
 RAND R1 R7
