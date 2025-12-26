@@ -393,6 +393,16 @@ OR R0 1 2      ; R0 = (1 != 0 or  0 != 0) -> 1
 NOT R0 1       ; R0 = (!1) -> 0
 ```
 
+> NOTE: All values in GRAB Assembly are stored as floating point numbers.
+> Because of this, arithmetic can introduce small precision errors (e.g.,
+> `0.1 + 0.2 = 0.30000000000000004`), meaning results are often not exact.
+> When comparing values, keep this in mind, especially with `EQUAL`.
+> Only rely on equality when you know the values are set exactly.
+>
+> For example, if you want to check whether an object has moved from 0 to 0.1,
+> instead of checking whether the value is `EQUAL` to 0.1, check whether
+> it is `GREATER` than 0.05.
+
 ### Control Flow Operators
 
 Control flow operators allow for jumping around the code to create
