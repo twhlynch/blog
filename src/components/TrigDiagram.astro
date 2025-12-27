@@ -197,7 +197,7 @@ const id = Math.random().toString(36).slice(2, 11);
 	document.addEventListener("mouseup", () => (dragging = false));
 	document.addEventListener("mousemove", (e) => move(e.clientX, e.clientY));
 
-	button.addEventListener("touchstart", (e) => {
+	svg.addEventListener("touchstart", (e) => {
 		e.preventDefault();
 		dragging = true;
 	});
