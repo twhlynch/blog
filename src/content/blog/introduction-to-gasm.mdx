@@ -2,7 +2,7 @@
 title: "Intro to GRAB Assembly"
 description: "An introduction to writing GRAB Assembly"
 pubDate: "Dec 22 2025"
-updatedDate: "Dec 25 2025"
+updatedDate: "Jan 5 2026"
 heroImage: "/hero/index-rabbit_yoyodud3.webp"
 tags: ["grab", "asm"]
 ---
@@ -580,11 +580,12 @@ GOTO loop
 The JSON Editor has a simple but very powerful extra tool on top of GRAB Assembly:
 preprocessor macros that allow for generating far more complex programs.
 
-| Macro | Arg 1 | Arg 2 | Arg 3 | Arg 4 | Description                            |
-| ----- | ----- | ----- | ----- | ----- | -------------------------------------- |
-| #FOR  | var   | start | stop  | step  | for (i = start; i \<= stop; i += step) |
-| #IF   | A     | op    | B     |       | if (A op B)                            |
-| #END  |       |       |       |       | end scope                              |
+| Macro   | Arg 1 | Arg 2 | Arg 3 | Arg 4 | Description                            |
+| ------- | ----- | ----- | ----- | ----- | -------------------------------------- |
+| #FOR    | var   | start | stop  | step  | for (i = start; i \<= stop; i += step) |
+| #IF     | A     | op    | B     |       | if (A op B)                            |
+| #END    |       |       |       |       | end scope                              |
+| #DEFINE | var   | expr  |       |       | define a variable                      |
 
 #### FOR Macro
 
@@ -612,6 +613,17 @@ Valid operators are:
 ; is x less than y
 #IF x < y
 #END
+```
+
+#### DEFINE Macro
+
+`#DEFINE` takes a variable name and an expression to set it to.
+The variable will then exist until redefined.
+
+```gasm
+; a is 10, b is 5
+#DEFINE n a + 3 * (b * b)
+; n is 85
 ```
 
 #### Macro variables
