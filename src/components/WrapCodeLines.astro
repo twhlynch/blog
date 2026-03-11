@@ -1,0 +1,17 @@
+---
+const id = Math.random().toString(36).slice(2, 11);
+---
+
+<script
+	id={"wrap-code-lines-" + id}
+	type="module"
+	define:vars={{ id }}
+	is:inline
+>
+	const self = document.getElementById("wrap-code-lines-" + id);
+	const code = self.previousElementSibling;
+
+	if (code) {
+		code.classList.add("wrap-code-lines");
+	}
+</script>

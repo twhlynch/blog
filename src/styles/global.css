@@ -188,6 +188,9 @@ pre {
 	&.wrap-code {
 		max-height: 20.5em;
 	}
+	&.wrap-code-lines {
+		text-wrap: auto;
+	}
 }
 pre > code {
 	all: unset;
