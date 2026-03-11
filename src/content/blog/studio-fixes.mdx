@@ -1,0 +1,48 @@
+---
+title: "Studio fixes"
+description: ""
+pubDate: "Mar 12 2026"
+heroImage: "/hero/who-is-idnex_TheWhiteCrescent.webp"
+tags: ["hidden"]
+---
+
+import WrapCodeLines from "@components/WrapCodeLines.astro";
+
+### Remove ZoneIdentifiers
+
+Windows creates `Zone.Identifier` files to track when files originate from the internet or other security zones. (downloads, emails, zips...)
+
+The `SaveZoneInformation` policy controls whether Windows saves this information.
+`1` means save, `2` means don't save.
+
+You can read the current value of the policy with:
+
+```powershell
+reg query "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments" /v SaveZoneInformation
+```
+
+<WrapCodeLines />
+
+Then set it to `2` to disable it:
+
+```powershell
+reg add "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments" /v SaveZoneInformation /t REG_DWORD /d 2 /f
+```
+
+<WrapCodeLines />
+
+### Fix ARM MacOS building as x86
+
+On ARM Macs, some projects may incorrectly build for `x86_64` architecture.
+
+To force an ARM build, add the following to `CMakeLists.txt`:
+
+```cmake
+set(CMAKE_OSX_ARCHITECTURES "arm64")
+```
+
+Alternatively, you can pass `-DCMAKE_OSX_ARCHITECTURES=arm64` during project configuration:
+
+```sh
+cmake -DCMAKE_OSX_ARCHITECTURES=arm64 <rest of build command>
+```
