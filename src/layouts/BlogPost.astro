@@ -136,25 +136,27 @@ const { title, description, pubDate, updatedDate, heroImage, tags, canonical } =
 					}
 				</div>
 				<div class="prose" id="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on{" "}
-										<FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<div class="stats">
-							<ViewCounter />
-							<ReadTime />
-						</div>
-						<hr />
-					</div>
+					{
+						!tags.includes("hidden") && (
+							<div class="title">
+								<div class="date">
+									<FormattedDate date={pubDate} />
+									{updatedDate && (
+										<div class="last-updated-on">
+											Last updated on{" "}
+											<FormattedDate date={updatedDate} />
+										</div>
+									)}
+								</div>
+								<h1>{title}</h1>
+								<div class="stats">
+									<ViewCounter />
+									<ReadTime />
+								</div>
+								<hr />
+							</div>
+						)
+					}
 					<Tags tags={tags} />
 					{
 						canonical && (
@@ -183,7 +185,7 @@ const { title, description, pubDate, updatedDate, heroImage, tags, canonical } =
 					<HeaderLinks />
 				</div>
 			</article>
-			<SuggestedPosts props={Astro.props} />
+			{!tags.includes("hidden") && <SuggestedPosts props={Astro.props} />}
 		</main>
 		<Footer />
 	</body>
