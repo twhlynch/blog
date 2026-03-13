@@ -1,0 +1,48 @@
+<nav class="toc-wrapper">
+	<strong class="toc-title">CONTENTS</strong>
+	<ul class="toc-list" id="toc"></ul>
+</nav>
+
+<script type="module" is:inline>
+	const headings = Array.from(
+		document.querySelectorAll("h1, h2, h3, h4, h5, h6"),
+	);
+
+	if (headings.length) {
+		const toc = document.getElementById("toc");
+
+		for (const heading of headings) {
+			if (!heading.id) continue;
+
+			const level = Number(heading.tagName[1]);
+
+			const li = document.createElement("li");
+			li.style.marginLeft = `${level * 0.5}rem`;
+
+			const a = document.createElement("a");
+			a.href = "#" + heading.id;
+			a.textContent = heading.textContent;
+
+			li.appendChild(a);
+			toc.appendChild(li);
+		}
+	}
+</script>
+
+<style>
+	.toc-wrapper {
+		position: relative;
+		padding: 1rem;
+		margin-bottom: 2rem;
+	}
+	.toc-title {
+		font-size: 1.5rem;
+		color: var(--layer);
+		letter-spacing: 1rem;
+	}
+	.toc-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+</style>
