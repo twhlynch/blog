@@ -1,5 +1,5 @@
 ---
-title: "Studio fixes"
+title: "Studio tips"
 description: ""
 pubDate: "Mar 12 2026"
 tags: ["hidden"]
@@ -47,4 +47,76 @@ Alternatively, you can pass `-DCMAKE_OSX_ARCHITECTURES=arm64` during project con
 
 ```sh
 cmake -DCMAKE_OSX_ARCHITECTURES=arm64 <rest of build command>
+```
+
+### Sample .gitignore
+
+To save some time, this `.gitignore` template should cover everything you will run into in Studio.
+
+```ini
+# editor specific configs
+/.vscode/
+/.vs/
+/.idea/
+/.zed/
+/.nvim.lua
+*.swp
+*.swo
+*.swn
+*.iml
+
+# os specific metadata
+.DS_Store
+*:Zone.Identifier
+[Dd]esktop.ini
+
+# lc3 output
+*.obj
+*.sym
+*.lst
+*.bin
+*.hex
+*.log
+
+# executable output
+*.exe
+*.app
+*.out
+# library output
+*.a
+*.so
+*.dylib
+*.dll
+*.lib
+*.so.*
+# debug symbols
+*.pdb
+# linker output
+*.ilk
+# object files
+*.o
+*.slo
+*.lo
+
+# crash logs
+*.stackdump
+
+# lsp generated files
+/.cache/
+compile_commands.json
+
+# common build folders
+/build/
+/Build/
+
+# common temp or backup files
+/tmp/
+/temp/
+*~
+._*
+*.bak
+*.tmp
+
+# archives
+*.zip
 ```
