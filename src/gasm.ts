@@ -50,7 +50,7 @@ export const gasm: LanguageRegistration = {
 			patterns: [
 				{
 					name: "keyword.control.instruction.gasm",
-					match: "\\b(NOOP|SET|SWAP|ADD|SUB|MUL|DIV|EQUAL|LESS|GREATER|AND|OR|NOT|LABEL|GOTO|IF|SLEEP|END|RAND|FLOOR|MOD|SIN|COS|SQRT|ATAN2)\\b",
+					match: "\\b(NOOP|SET|SWAP|ADD|SUB|MUL|DIV|EQUAL|LESS|GREATER|AND|OR|NOT|LABEL|GOTO|IF|SLEEP|END|RAND|FLOOR|MOD|SIN|COS|SQRT|ATAN2|POW|ABS|VEC_SET|VEC_ADD|VEC_SUB|VEC_MUL|VEC_SCL|VEC_LEN|VEC_DOT)\\b",
 				},
 			],
 		},

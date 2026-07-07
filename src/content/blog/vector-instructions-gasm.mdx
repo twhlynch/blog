@@ -1,0 +1,221 @@
+---
+title: "Vector instructions in GRAB Assembly"
+description: "Writing more efficient code with the new vector instructions"
+pubDate: "Jul 7 2026"
+heroImage: "/hero/buff-idnex_ch4dfun.webp"
+tags: ["grab", "asm"]
+---
+
+In GRAB Assembly, you can now work with **vectors** using new vector instructions:
+`VEC_SET`, `VEC_ADD`, `VEC_SUB`, `VEC_MUL`, `VEC_SCL`, `VEC_LEN`, and `VEC_DOT`.
+
+### What are Vectors?
+
+Vectors are groups of three consecutive registers that represent things like:
+
+- Position (`X`, `Y`, `Z`)
+- Rotation (`X`, `Y`, `Z`)
+- Color (`R`, `G`, `B`)
+
+Instead of writing the same operation three times, vector instructions let you
+operate on all three components at once.
+
+So for example, something like this:
+
+```gasm
+MUL Obj.Pos.X Obj.Pos.X 0.5
+MUL Obj.Pos.Y Obj.Pos.Y 0.5
+MUL Obj.Pos.Z Obj.Pos.Z 0.5
+```
+
+becomes a single instruction:
+
+```gasm
+VEC_SCL Obj.Pos.X Obj.Pos.X 0.5 ; X, Y, and Z all at once
+```
+
+### How vectors work
+
+If you pass `Obj.Pos.X` as a vector operand, the instruction uses `Obj.Pos.X`, `Obj.Pos.Y`, and `Obj.Pos.Z`.
+If you pass `R0`, it uses `R0`, `R1`, and `R2`.
+
+This works with any registers that are laid out consecutively, which includes most connections.
+For example, `Obj.Col.R` is followed by `Obj.Col.G` and `Obj.Col.B`, so all three form a color vector.
+
+### Errors
+
+Any vector instruction with a vector operand that does not have 3 consecutive registers
+will throw an error. Such as using `R6` where there is no `R8` for the third value.
+
+> Note: Special registers cannot be used as vectors
+
+### The Instructions
+
+| Instruction | Operands | Description                   |
+| ----------- | -------- | ----------------------------- |
+| VEC_SET     | DST SRC  | DST..DST+2 = SRC..SRC+2       |
+| VEC_ADD     | DST A B  | DST..DST+2 = A..A+2 + B..B+2  |
+| VEC_SUB     | DST A B  | DST..DST+2 = A..A+2 - B..B+2  |
+| VEC_MUL     | DST A B  | DST..DST+2 = A..A+2 \* B..B+2 |
+| VEC_SCL     | DST A S  | DST..DST+2 = A..A+2 \* S      |
+| VEC_LEN     | DST A    | DST = length(A..A+2)          |
+| VEC_DOT     | DST A B  | DST = dot(A..A+2, B..B+2)     |
+
+##### VEC_SET
+
+`VEC_SET` copies three consecutive registers from a source vector to a destination vector.
+
+```gasm
+VEC_SET R0 R3        ; (R0, R1, R2) = (R3, R4, R5)
+VEC_SET Obj.Pos.X R0 ; Obj.Pos = (R0, R1, R2)
+```
+
+This is equivalent to writing three `SET` instructions:
+
+```gasm
+SET Obj.Pos.X R0
+SET Obj.Pos.Y R1
+SET Obj.Pos.Z R2
+```
+
+##### VEC_ADD
+
+`VEC_ADD` adds two vectors. Each register of A is added to the matching
+register of B.
+
+```gasm
+VEC_ADD R0 R0 R3               ; (R0, R1, R2) += (R3, R4, R5)
+VEC_ADD Obj.Pos.X Obj.Pos.X R0 ; Obj.Pos += (R0, R1, R2)
+```
+
+This is equivalent to writing three `ADD` instructions:
+
+```gasm
+ADD Obj.Pos.X Obj.Pos.X R0
+ADD Obj.Pos.Y Obj.Pos.Y R1
+ADD Obj.Pos.Z Obj.Pos.Z R2
+```
+
+##### VEC_SUB
+
+`VEC_SUB` subtracts two vectors.
+
+```gasm
+VEC_SUB Obj.Pos.X Obj.Pos.X R0 ; Obj.Pos -= (R0, R1, R2)
+```
+
+This is equivalent to writing three `SUB` instructions:
+
+```gasm
+SUB Obj.Pos.X Obj.Pos.X R0
+SUB Obj.Pos.Y Obj.Pos.Y R1
+SUB Obj.Pos.Z Obj.Pos.Z R2
+```
+
+##### VEC_MUL
+
+`VEC_MUL` multiplies two vectors component-wise.
+
+```gasm
+VEC_MUL Obj.Pos.X Obj.Pos.X R0 ; Obj.Pos *= (R0, R1, R2)
+```
+
+This is equivalent to writing three `MUL` instructions:
+
+```gasm
+MUL Obj.Pos.X Obj.Pos.X R0
+MUL Obj.Pos.Y Obj.Pos.Y R1
+MUL Obj.Pos.Z Obj.Pos.Z R2
+```
+
+##### VEC_SCL
+
+`VEC_SCL` multiplies each register of a vector by a single scalar value. The value can be a register or a constant.
+
+```gasm
+VEC_SCL Obj.Pos.X Obj.Pos.X 0.5 ; scale Obj.Pos by half
+VEC_SCL R0 R0 DeltaTime         ; scale (R0, R1, R2) by DeltaTime
+```
+
+This is equivalent to writing three `MUL` instructions:
+
+```gasm
+MUL Obj.Pos.X Obj.Pos.X 0.5
+MUL Obj.Pos.Y Obj.Pos.Y 0.5
+MUL Obj.Pos.Z Obj.Pos.Z 0.5
+```
+
+##### VEC_LEN
+
+`VEC_LEN` computes the length of a vector. The result is a single float, not a vector.
+
+```gasm
+VEC_LEN R0 Obj.Pos.X ; R0 = sqrt(X^2 + Y^2 + Z^2)
+```
+
+This is equivalent to writing three `MUL` and two `ADD` instructions, followed by a `SQRT`:
+
+```gasm
+MUL R0 Obj.Pos.X Obj.Pos.X
+MUL R1 Obj.Pos.Y Obj.Pos.Y
+MUL R2 Obj.Pos.Z Obj.Pos.Z
+ADD R0 R0 R1
+ADD R0 R0 R2
+SQRT R0 R0
+```
+
+##### VEC_DOT
+
+`VEC_DOT` computes the dot product of two vectors. The result is a single float.
+
+```gasm
+VEC_DOT R0 Obj.Pos.X R3 ; R0 = X*R3 + Y*R4 + Z*R5
+```
+
+This is equivalent to writing three `MUL` and two `ADD` instructions:
+
+```gasm
+MUL R0 Obj.Pos.X R3
+MUL R1 Obj.Pos.Y R4
+MUL R2 Obj.Pos.Z R5
+ADD R0 R0 R1
+ADD R0 R0 R2
+```
+
+### Examples
+
+##### Moving an object per frame
+
+Instead of writing three `ADD` instructions, use `VEC_ADD` to move all at once:
+
+```gasm
+LABEL loop
+	VEC_ADD Obj.Pos.X Obj.Pos.X R0
+	SLEEP 0
+GOTO loop
+```
+
+##### Distance check
+
+`VEC_LEN` combined with a comparison lets you check how far an object is from a target:
+
+```gasm
+; get distance from object to player
+VEC_SUB R0 Player.Pos.X Obj.Pos.X ; vector from obj to player
+VEC_LEN R0 R0                     ; R0 = distance
+
+; check if close enough
+LESS R0 R0 5                      ; is distance < 5?
+IF R0 do_something
+```
+
+##### Scaling a velocity vector
+
+```gasm
+VEC_SCL R0 R0 DeltaTime        ; scale velocity by frame time
+VEC_ADD Obj.Pos.X Obj.Pos.X R0 ; apply scaled velocity
+```
+
+### That's all for now
+
+Thanks for reading, now go make something cool!
